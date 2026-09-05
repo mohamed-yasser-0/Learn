@@ -11,7 +11,6 @@ import {
   CircularProgress,
   Grid,
 } from "@mui/material";
-import imge from "../imge/1.jpg";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import { useNavigate } from "react-router-dom";
