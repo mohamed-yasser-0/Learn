@@ -148,7 +148,7 @@ function HeroSection() {
           <Button
             variant="outlined"
             size="large"
-            onClick={() => navigate("/login")}
+            // onClick={() => navigate("/login")}
             sx={{
               color: "rgba(255,255,255,0.8)",
               borderColor: "rgba(255,255,255,0.3)",
