@@ -156,12 +156,8 @@ export default function LessonsPage() {
 
     // البيانات اللي هتتبعت للـ backend
     const progressData = {
-      courseId: id,
       lessonId: activeLessonId,
       duration: 120,
-      userId: "USER_ID_HERE",
-
-      // حسب الـ schema بتاعك
       quizScore: [correct, total, percentage],
     };
 

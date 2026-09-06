@@ -6,9 +6,9 @@ const appError = require("../utils/appError.js");
 const { SUCCESS, FAIL } = require("../utils/httpStatusText.js");
 
 const postProgress = AsyncWrapper(async (req, res, next) => {
-    const {id} = req.body;
+    const {lessonId} = req.body;
 
-    const lesson = await Lesson.findById(id);
+    const lesson = await Lesson.findById(lessonId);
 
     if (!lesson) {
         return next(appError.create("الدرس غير موجود", 404, FAIL));
@@ -16,7 +16,7 @@ const postProgress = AsyncWrapper(async (req, res, next) => {
 
     const progress = new Progress({
         ...req.body,
-        lessonId: id,
+        lessonId: lessonId,
         userId: req.user.id,
         courseId: lesson.idCours
     });
