@@ -1,36 +1,71 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const lessonSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
-    trim: true
+    trim: true,
   },
+
   idCours: {
     type: String,
-    required: true
   },
+
   order: {
     type: Number,
-    required: true
   },
+
+  type: {
+    type: String,
+    enum: ["video", "quiz"],
+    required: true,
+  },
+
   description: {
-    type: String
+    type: String,
   },
+
+  // خاص بالفيديو فقط
   videoUrl: {
     type: String,
-    required: true
+    required: function () {
+      return this.type === "video";
+    },
   },
+
   duration: {
-    type: Number
+    type: Number,
+    required: function () {
+      return this.type === "video";
+    },
   },
 
   summaryPoints: [
     {
-      type: String
-    }
+      type: String,
+    },
   ],
 
+  // خاص بالكويز فقط
+  quiz: {
+    questions: [
+      {
+        question: {
+          type: String,
+          required: true,
+        },
+
+        options: {
+          type: [String],
+          required: true,
+        },
+
+        correctAnswer: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+  },
 });
 
-module.exports = mongoose.model('Lesson', lessonSchema);
+module.exports = mongoose.model("Lesson", lessonSchema);

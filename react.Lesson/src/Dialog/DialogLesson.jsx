@@ -33,10 +33,6 @@ export default function FullScreenDialogLesson() {
     videoUrl: "",
     order: 0,
     summaryPoints: [""],
-    quiz: {
-      title: "",
-      questions: [],
-    },
   });
 
   // فتح و غلق
@@ -65,72 +61,6 @@ export default function FullScreenDialogLesson() {
       summaryPoints: [...formLesson.summaryPoints, ""],
     });
   };
-
-  // ================= quiz =================
-  const handleQuizTitle = (e) => {
-    setFormLesson({
-      ...formLesson,
-      quiz: { ...formLesson.quiz, title: e.target.value },
-    });
-  };
-  const bottomRef = useRef(null);
-
-  const addQuestion = () => {
-    setFormLesson({
-      ...formLesson,
-      quiz: {
-        ...formLesson.quiz,
-        questions: [
-          ...formLesson.quiz.questions,
-          { text: "", options: ["", ""], correct: 0 },
-        ],
-      },
-    });
-    setTimeout(() => {
-      bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  };
-
-  const handleQuestionChange = (qIndex, value) => {
-    const updated = [...formLesson.quiz.questions];
-    updated[qIndex].text = value;
-
-    setFormLesson({
-      ...formLesson,
-      quiz: { ...formLesson.quiz, questions: updated },
-    });
-  };
-
-  const handleOptionChange = (qIndex, oIndex, value) => {
-    const updated = [...formLesson.quiz.questions];
-    updated[qIndex].options[oIndex] = value;
-
-    setFormLesson({
-      ...formLesson,
-      quiz: { ...formLesson.quiz, questions: updated },
-    });
-  };
-
-  const addOption = (qIndex) => {
-    const updated = [...formLesson.quiz.questions];
-    updated[qIndex].options.push("");
-
-    setFormLesson({
-      ...formLesson,
-      quiz: { ...formLesson.quiz, questions: updated },
-    });
-  };
-
-  const setCorrect = (qIndex, value) => {
-    const updated = [...formLesson.quiz.questions];
-    updated[qIndex].correct = value;
-
-    setFormLesson({
-      ...formLesson,
-      quiz: { ...formLesson.quiz, questions: updated },
-    });
-  };
-
   // ================= submit =================
   const handleSubmit = () => {
     postLesson(id, formLesson);
@@ -198,51 +128,6 @@ export default function FullScreenDialogLesson() {
           ))}
 
           <Button onClick={addSummary}>إضافة نقطة</Button>
-
-          {/* quiz */}
-          <h3>Quiz</h3>
-
-          <TextField
-            label="عنوان الكويز"
-            value={formLesson.quiz.title}
-            onChange={handleQuizTitle}
-            fullWidth
-          />
-
-          {formLesson.quiz.questions.map((q, qIndex) => (
-            <Box key={qIndex} sx={{ border: "1px solid #ccc", p: 2 }}>
-              <TextField
-                label="السؤال"
-                value={q.text}
-                onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
-                fullWidth
-              />
-
-              {q.options.map((opt, oIndex) => (
-                <Box key={oIndex} sx={{ display: "flex", gap: 1, mt: 1 }}>
-                  <TextField
-                    label={`اختيار ${oIndex + 1}`}
-                    value={opt}
-                    onChange={(e) =>
-                      handleOptionChange(qIndex, oIndex, e.target.value)
-                    }
-                  />
-
-                  <input
-                    type="radio"
-                    name={`correct-${qIndex}`}
-                    checked={q.correct === oIndex}
-                    onChange={() => setCorrect(qIndex, oIndex)}
-                  />
-                </Box>
-              ))}
-
-              <Button onClick={() => addOption(qIndex)}>إضافة اختيار</Button>
-            </Box>
-          ))}
-          <Button onClick={addQuestion}>إضافة سؤال</Button>
-          {/* submit */}
-          <div ref={bottomRef} />
           <Button
             variant="contained"
             onClick={handleSubmit}

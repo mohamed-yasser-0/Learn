@@ -21,6 +21,7 @@ import FullScreenDialogLesson from "../Dialog/DialogLesson";
 import DeleteCourseDialog from "../Dialog/AlertDialog";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import FullScreenDialogQuiz from "../Dialog/examDialog";
 // ---- بيانات وهمية للدرس/الفيديو (front-end فقط) ----
 // const mockLesson = {
 //   title: "Introduction to React Hooks",
@@ -199,8 +200,9 @@ export default function LessonsPage() {
                 );
               })}
 
-            <Box sx={{ width: "100%", textAlign: "center" }}>
+            <Box sx={{ width: "100%", textAlign: "center",justifyContent:"space-between" }}>
               {user?.role === "ADMIN" && <FullScreenDialogLesson />}
+              {user?.role === "ADMIN" && <FullScreenDialogQuiz />}
             </Box>
             <Box sx={{ width: "100%", textAlign: "center" }}>
               {user?.role === "ADMIN" && (
@@ -239,30 +241,6 @@ export default function LessonsPage() {
               zIndex: 2,
             }}
           >
-            <Chip
-              label={"mockLesson.category"}
-              size="small"
-              sx={{
-                bgcolor: alpha(theme.palette.secondary.main, 0.15),
-                color: "secondary.main",
-                fontWeight: 600,
-                fontSize: 12,
-                border: "1px solid",
-                borderColor: alpha(theme.palette.secondary.main, 0.35),
-              }}
-            />
-            <Chip
-              label={"mockLesson".isFree ? "مجاني" : "مدفوع"}
-              size="small"
-              sx={{
-                bgcolor: "action.hover",
-                color: "text.secondary",
-                fontSize: 12,
-                fontFamily: "monospace",
-                border: "1px solid",
-                borderColor: "divider",
-              }}
-            />
           </Box>
           {renderPlayer()}
         </Box>
@@ -286,24 +264,71 @@ export default function LessonsPage() {
         </Typography>
         {/* البيانات المعروفة تحت الفيديو */}
         <Box sx={{ mb: 3 }}>
+          <Stack
+            direction="row"
+            spacing={{ xs: 1, sm: 2 }}
+            sx={{
+              mb: 3,
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Button
+              size="small"
+              variant="contained"
+              // onClick={handlePrevious}
+              sx={{
+                textTransform: "none",
+                borderRadius: "10px",
+                color: "white",
+                fontSize: { xs: "12px", sm: "14px" },
+                px: { xs: 1, sm: 2 },
+                py: { xs: 0.7, sm: 1 },
+                minWidth: { xs: "100px", sm: "auto" },
+                whiteSpace: "nowrap",
+              }}
+            >
+              ← الدرس السابق
+            </Button>
+
+            <Button
+              size="small"
+              variant="contained"
+              // onClick={handleNext}
+              sx={{
+                textTransform: "none",
+                borderRadius: "10px",
+                color: "white",
+                fontSize: { xs: "12px", sm: "14px" },
+                px: { xs: 1, sm: 2 },
+                py: { xs: 0.7, sm: 1 },
+                minWidth: { xs: "100px", sm: "auto" },
+                whiteSpace: "nowrap",
+              }}
+            >
+              الدرس التالي →
+            </Button>
+          </Stack>
           <Button
             size="small"
-            variant="outlined"
+            variant="text"
             onClick={() => setShowSummary((prev) => !prev)}
             sx={{
               textTransform: "none",
-              borderRadius: "10px",
-              borderColor: "divider",
-              color: "text.secondary",
+              textDecoration: "underline",
+              minWidth: "auto",
+              padding: 0,
+              fontSize: { xs: "11px", sm: "14px" },
+              color: "primary.main",
               "&:hover": {
-                borderColor: "primary.main",
-                bgcolor: "action.hover",
+                backgroundColor: "transparent",
+                textDecoration: "underline",
               },
             }}
           >
             {showSummary ? "إخفاء الملخص" : "عرض ملخص الدرس"}
           </Button>
-
           {showSummary && activeLesson?.summaryPoints?.length > 0 && (
             <Stack spacing={0.8} sx={{ mt: 1.5 }}>
               {activeLesson.summaryPoints

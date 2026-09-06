@@ -9,95 +9,115 @@ import {
   Slide,
   Box,
   TextField,
+  Typography,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+// import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { AuthContext } from "../theme/context";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { AuthContext } from "../theme/context";
-import { useRef } from "react";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function FullScreenDialogExam() {
-  const { postExam } = React.useContext(AuthContext);
+// شكل سؤال فاضي جديد
+const emptyQuestion = () => ({
+  text: "",
+  options: ["", ""],
+  correct: 0,
+});
+
+export default function FullScreenDialogQuiz() {
+  const { id } = useParams();
+  const { postQuiz } = React.useContext(AuthContext); // عدّل الاسم لو مختلف عندك
 
   const [open, setOpen] = useState(false);
 
-  const [formExam, setFormExam] = useState({
-    title: "",
-    subject: "",
-    level: "",
-    questions: [],
+  const [formQuiz, setFormQuiz] = useState({
+    order: 0,
+    questions: [emptyQuestion()],
   });
 
+  // فتح و غلق
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // ================= basic fields =================
-  const handleChange = (field, value) => {
-    setFormExam({ ...formExam, [field]: value });
+  // ترتيب الدرس اللي الكويز بتاعه
+  const handleOrderChange = (e) => {
+    setFormQuiz({ ...formQuiz, order: e.target.value });
   };
-  const bottomRef = useRef(null);
+
   // ================= questions =================
-const addQuestion = () => {
-  setFormExam((prev) => ({
-    ...prev,
-    questions: [
-      ...prev.questions,
-      {
-        question: "",
-        options: ["", ""],
-        correct: 0,
-      },
-    ],
-  }));
-
-  setTimeout(() => {
-    bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
-  }, 100);
-};
-
-  const handleQuestionChange = (qIndex, value) => {
-    const updated = [...formExam.questions];
-    updated[qIndex].question = value;
-
-    setFormExam({ ...formExam, questions: updated });
+  const handleQuestionTextChange = (qIndex, value) => {
+    const updated = [...formQuiz.questions];
+    updated[qIndex].text = value;
+    setFormQuiz({ ...formQuiz, questions: updated });
   };
 
-  const handleOptionChange = (qIndex, oIndex, value) => {
-    const updated = [...formExam.questions];
-    updated[qIndex].options[oIndex] = value;
+  const addQuestion = () => {
+    setFormQuiz({
+      ...formQuiz,
+      questions: [...formQuiz.questions, emptyQuestion()],
+    });
+  };
 
-    setFormExam({ ...formExam, questions: updated });
+  const removeQuestion = (qIndex) => {
+    const updated = formQuiz.questions.filter((_, i) => i !== qIndex);
+    setFormQuiz({ ...formQuiz, questions: updated });
+  };
+
+  // ================= options =================
+  const handleOptionChange = (qIndex, oIndex, value) => {
+    const updated = [...formQuiz.questions];
+    updated[qIndex].options[oIndex] = value;
+    setFormQuiz({ ...formQuiz, questions: updated });
   };
 
   const addOption = (qIndex) => {
-    const updated = [...formExam.questions];
+    const updated = [...formQuiz.questions];
     updated[qIndex].options.push("");
-
-    setFormExam({ ...formExam, questions: updated });
+    setFormQuiz({ ...formQuiz, questions: updated });
   };
 
-  const setCorrect = (qIndex, value) => {
-    const updated = [...formExam.questions];
-    updated[qIndex].correct = value;
+  const removeOption = (qIndex, oIndex) => {
+    const updated = [...formQuiz.questions];
+    updated[qIndex].options = updated[qIndex].options.filter(
+      (_, i) => i !== oIndex,
+    );
+    // لو الإجابة الصح كانت الاختيار اللي اتشال، رجّعها لأول اختيار
+    if (updated[qIndex].correct >= updated[qIndex].options.length) {
+      updated[qIndex].correct = 0;
+    }
+    setFormQuiz({ ...formQuiz, questions: updated });
+  };
 
-    setFormExam({ ...formExam, questions: updated });
+  const handleCorrectChange = (qIndex, oIndex) => {
+    const updated = [...formQuiz.questions];
+    updated[qIndex].correct = oIndex;
+    setFormQuiz({ ...formQuiz, questions: updated });
   };
 
   // ================= submit =================
   const handleSubmit = () => {
-    postExam(formExam);
-    console.log(formExam);
+    postQuiz(id, formQuiz);
+    console.log(formQuiz);
     handleClose();
   };
 
   return (
     <>
-      <Button variant="contained" onClick={handleClickOpen}>
-        إضافة امتحان
+      <Button
+        sx={{ minWidth: "130px" }}
+        variant="contained"
+        color="primary"
+        onClick={handleClickOpen}
+      >
+        اضافه كويز
       </Button>
 
       <Dialog
@@ -115,65 +135,118 @@ const addQuestion = () => {
         </AppBar>
 
         <List sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-          {/* بيانات الامتحان */}
+          {/* ترتيب الدرس */}
           <TextField
-            label="عنوان الامتحان"
-            value={formExam.title}
-            onChange={(e) => handleChange("title", e.target.value)}
+            label="ترتيب الدرس اللي الكويز ده بتاعه"
+            name="order"
+            type="number"
+            value={formQuiz.order}
+            onChange={handleOrderChange}
             fullWidth
           />
 
-          <TextField
-            label="المادة"
-            value={formExam.subject}
-            onChange={(e) => handleChange("subject", e.target.value)}
-            fullWidth
-          />
-
-          <TextField
-            label="المستوى (سهل / متوسط / صعب)"
-            value={formExam.level}
-            onChange={(e) => handleChange("level", e.target.value)}
-            fullWidth
-          />
+          <Divider />
 
           {/* الأسئلة */}
+          {formQuiz.questions.map((question, qIndex) => (
+            <Box
+              key={qIndex}
+              sx={{
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: "12px",
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1.5,
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography sx={{ fontWeight: 700 }}>
+                  السؤال {qIndex + 1}
+                </Typography>
+                {formQuiz.questions.length > 1 && (
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => removeQuestion(qIndex)}
+                  >
+                    {/* <DeleteOutlineIcon fontSize="small" /> */}
+                  </IconButton>
+                )}
+              </Box>
 
-          {formExam.questions.map((q, qIndex) => (
-            <Box key={qIndex} sx={{ border: "1px solid #ccc", p: 2 }}>
               <TextField
-                label="السؤال"
-                value={q.question}
-                onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
+                label="نص السؤال"
+                value={question.text}
+                onChange={(e) =>
+                  handleQuestionTextChange(qIndex, e.target.value)
+                }
                 fullWidth
               />
 
-              {q.options.map((opt, oIndex) => (
-                <Box key={oIndex} sx={{ display: "flex", gap: 1, mt: 1 }}>
-                  <TextField
-                    label={`اختيار ${oIndex + 1}`}
-                    value={opt}
-                    onChange={(e) =>
-                      handleOptionChange(qIndex, oIndex, e.target.value)
-                    }
-                  />
+              <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
+                الاختيارات (حدد دايرة الإجابة الصح)
+              </Typography>
 
-                  <input
-                    type="radio"
-                    name={`correct-${qIndex}`}
-                    checked={q.correct === oIndex}
-                    onChange={() => setCorrect(qIndex, oIndex)}
-                  />
-                </Box>
-              ))}
+              <RadioGroup
+                value={question.correct}
+                onChange={(e) =>
+                  handleCorrectChange(qIndex, Number(e.target.value))
+                }
+              >
+                {question.options.map((option, oIndex) => (
+                  <Box
+                    key={oIndex}
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <FormControlLabel
+                      value={oIndex}
+                      control={<Radio />}
+                      label=""
+                      sx={{ mr: 0 }}
+                    />
+                    <TextField
+                      size="small"
+                      placeholder={`اختيار ${oIndex + 1}`}
+                      value={option}
+                      onChange={(e) =>
+                        handleOptionChange(qIndex, oIndex, e.target.value)
+                      }
+                      fullWidth
+                    />
+                    {question.options.length > 2 && (
+                      <IconButton
+                        size="small"
+                        onClick={() => removeOption(qIndex, oIndex)}
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    )}
+                  </Box>
+                ))}
+              </RadioGroup>
 
-              <Button onClick={() => addOption(qIndex)}>إضافة اختيار</Button>
+              <Button size="small" onClick={() => addOption(qIndex)}>
+                إضافة اختيار
+              </Button>
             </Box>
           ))}
-          <Button onClick={addQuestion}>إضافة سؤال</Button>
-          <div ref={bottomRef} />
-          <Button variant="contained" onClick={handleSubmit}>
-            نشر الامتحان
+
+          <Button onClick={addQuestion}>إضافة سؤال جديد</Button>
+
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            sx={{ fontSize: "20px", py: 1 }}
+          >
+            نشر الكويز
           </Button>
         </List>
       </Dialog>
