@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
     confirm: "",
     agree: true,
   });
-  const BASE_URL = "https://learn-production-2770.up.railway.app/api";
+  const BASE_URL = "https://learn-production-6c88.up.railway.app/api";
   const getAuthHeaders = () => ({
     "Content-Type": "application/json",
     Authorization: `Bearer ${localStorage.getItem("token")}`,

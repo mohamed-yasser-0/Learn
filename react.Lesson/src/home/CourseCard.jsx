@@ -188,7 +188,7 @@ function CourseCard({ course }) {
                 fullWidth
                 sx={{ mt: 0.5, py: 0.9 }}
                 onClick={() => {
-                  navigate(`/slider/${course?._id}`);
+                  navigate(`/Learn/slider/${course?._id}`);
                 }}
               >
                 تابع التعلم

@@ -179,7 +179,7 @@ function LoginPage() {
     if (isLogged) {
       getCourses();
       getUser();
-      navigate("/home");
+      navigate("/Learn/home");
     }
   }, [isLogged, navigate]);
   const handle = (field) => (e) =>
@@ -328,7 +328,7 @@ function LoginPage() {
           fullWidth
           size="large"
           onClick={() => {
-            navigate("/register");
+            navigate("/Learn/register");
           }}
           sx={{ py: 1.4 }}
         >
