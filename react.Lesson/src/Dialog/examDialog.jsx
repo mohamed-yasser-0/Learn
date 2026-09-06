@@ -288,7 +288,7 @@ export default function FullScreenDialogQuiz() {
         sx={{
           minWidth: "130px",
         }}
-        variant="contained"
+        variant="outlined"
         color="primary"
         onClick={handleClickOpen}
       >

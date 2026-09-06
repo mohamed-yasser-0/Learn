@@ -73,7 +73,7 @@ export default function FullScreenDialogLesson() {
     <>
       <Button
         sx={{ minWidth: "130px" }}
-        variant="contained"
+        variant="outlined"
         color="primary"
         onClick={handleClickOpen}
       >
