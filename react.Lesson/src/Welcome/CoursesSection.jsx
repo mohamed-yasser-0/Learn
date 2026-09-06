@@ -940,7 +940,7 @@ function FullPage() {
         {/* ========== شريط الأخبار فوق ========== */}
         <NewsTicker />
         {/* ========== 1. سكشن الخطط ========== */}
-        <Box id="plans" sx={{ py: { xs: 8, md: 12 }, px: { xs: 2, md: 4 } }}>
+        <Box id="plan" sx={{ py: { xs: 8, md: 12 }, px: { xs: 2, md: 4 } }}>
           <Container maxWidth="lg">
             <Box sx={{ textAlign: "center", mb: { xs: 5, md: 8 } }}>
               <Chip

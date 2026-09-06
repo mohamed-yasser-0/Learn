@@ -17,13 +17,13 @@ function App() {
       <CssBaseline />
 
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/Learn/login" element={<LoginPage />} />
+        <Route path="/Learn/register" element={<RegisterPage />} />
         <Route path="/Learn" element={<Home />} />
 
         <Route element={<Layout />}>
           <Route
-            path="/home"
+            path="/Learn/home"
             element={
               <ProtectedRoute>
                 <Main />
@@ -31,7 +31,7 @@ function App() {
             }
           />
           <Route
-            path="/lessons/:idLesson"
+            path="/Learn/lessons/:idLesson"
             element={
               <ProtectedRoute>
                 <LessonFlowPage />
@@ -39,7 +39,7 @@ function App() {
             }
           />
           <Route
-            path="/exam/:examId"
+            path="/Learn/exam/:examId"
             element={
               <ProtectedRoute>
                 <ExamPage />
@@ -47,7 +47,7 @@ function App() {
             }
           />
           <Route
-            path="/slider/:id"
+            path="/Learn/slider/:id"
             element={
               <ProtectedRoute>
                 <Sidebar />
@@ -55,7 +55,7 @@ function App() {
             }
           />
           <Route
-            path="/profile"
+            path="/Learn/profile"
             element={
               <ProtectedRoute>
                 <ProfilePage />
