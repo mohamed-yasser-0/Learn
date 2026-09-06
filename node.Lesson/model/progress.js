@@ -1,4 +1,3 @@
-module.exports = mongoose.model("Progress", progressSchema);
 
 const mongoose = require('mongoose');
 
