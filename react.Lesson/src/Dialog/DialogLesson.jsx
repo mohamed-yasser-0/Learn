@@ -29,6 +29,7 @@ export default function FullScreenDialogLesson() {
   const [open, setOpen] = useState(false);
 
   const [formLesson, setFormLesson] = useState({
+    type: "",
     title: "",
     videoUrl: "",
     order: 0,
@@ -95,6 +96,12 @@ export default function FullScreenDialogLesson() {
 
         <List sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
           {/* بيانات الدرس */}
+          <TextField
+            label="نوع الدرس"
+            name="type"
+            onChange={handleChange}
+            fullWidth
+          />
           <TextField
             label="عنوان الدرس"
             name="title"

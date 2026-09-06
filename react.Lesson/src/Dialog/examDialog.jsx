@@ -15,17 +15,19 @@ import {
   FormControlLabel,
   Divider,
 } from "@mui/material";
+
 import CloseIcon from "@mui/icons-material/Close";
-// import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { AuthContext } from "../theme/context";
+
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-// شكل سؤال فاضي جديد
+// سؤال فاضي
 const emptyQuestion = () => ({
   text: "",
   options: ["", ""],
@@ -34,110 +36,343 @@ const emptyQuestion = () => ({
 
 export default function FullScreenDialogQuiz() {
   const { id } = useParams();
-  const { postQuiz } = React.useContext(AuthContext); // عدّل الاسم لو مختلف عندك
 
   const [open, setOpen] = useState(false);
 
   const [formQuiz, setFormQuiz] = useState({
+    title: "امتحان",
     order: 0,
     questions: [emptyQuestion()],
   });
 
-  // فتح و غلق
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  // =====================================
+  // React Query Mutation
+  // =====================================
 
-  // ترتيب الدرس اللي الكويز بتاعه
+  const quizMutation = useMutation({
+    mutationFn: async (quizData) => {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.post(
+        `https://learn-production-6c88.up.railway.app/api/lessons/${id}`,
+        quizData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      return response.data;
+    },
+
+    onSuccess: (data) => {
+      console.log("Quiz created:", data);
+
+      // قفل الـ Dialog
+      setOpen(false);
+
+      // تفريغ الفورم
+      setFormQuiz({
+        order: 0,
+        questions: [emptyQuestion()],
+      });
+    },
+
+    onError: (error) => {
+      console.error(
+        "Error creating quiz:",
+        error.response?.data || error.message,
+      );
+    },
+  });
+
+  // =====================================
+  // Open / Close
+  // =====================================
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  // =====================================
+  // Order
+  // =====================================
+
   const handleOrderChange = (e) => {
-    setFormQuiz({ ...formQuiz, order: e.target.value });
+    setFormQuiz((prev) => ({
+      ...prev,
+      order: e.target.value,
+    }));
   };
 
-  // ================= questions =================
+  // =====================================
+  // Questions
+  // =====================================
+
   const handleQuestionTextChange = (qIndex, value) => {
-    const updated = [...formQuiz.questions];
-    updated[qIndex].text = value;
-    setFormQuiz({ ...formQuiz, questions: updated });
-  };
+    setFormQuiz((prev) => {
+      const updatedQuestions = [...prev.questions];
 
-  const addQuestion = () => {
-    setFormQuiz({
-      ...formQuiz,
-      questions: [...formQuiz.questions, emptyQuestion()],
+      updatedQuestions[qIndex] = {
+        ...updatedQuestions[qIndex],
+        text: value,
+      };
+
+      return {
+        ...prev,
+        questions: updatedQuestions,
+      };
     });
   };
 
+  // إضافة سؤال
+  const addQuestion = () => {
+    setFormQuiz((prev) => ({
+      ...prev,
+      questions: [...prev.questions, emptyQuestion()],
+    }));
+  };
+
+  // حذف سؤال
   const removeQuestion = (qIndex) => {
-    const updated = formQuiz.questions.filter((_, i) => i !== qIndex);
-    setFormQuiz({ ...formQuiz, questions: updated });
+    setFormQuiz((prev) => ({
+      ...prev,
+      questions: prev.questions.filter((_, index) => index !== qIndex),
+    }));
   };
 
-  // ================= options =================
+  // =====================================
+  // Options
+  // =====================================
+
   const handleOptionChange = (qIndex, oIndex, value) => {
-    const updated = [...formQuiz.questions];
-    updated[qIndex].options[oIndex] = value;
-    setFormQuiz({ ...formQuiz, questions: updated });
+    setFormQuiz((prev) => {
+      const updatedQuestions = [...prev.questions];
+
+      const updatedOptions = [...updatedQuestions[qIndex].options];
+
+      updatedOptions[oIndex] = value;
+
+      updatedQuestions[qIndex] = {
+        ...updatedQuestions[qIndex],
+        options: updatedOptions,
+      };
+
+      return {
+        ...prev,
+        questions: updatedQuestions,
+      };
+    });
   };
 
+  // إضافة اختيار
   const addOption = (qIndex) => {
-    const updated = [...formQuiz.questions];
-    updated[qIndex].options.push("");
-    setFormQuiz({ ...formQuiz, questions: updated });
+    setFormQuiz((prev) => {
+      const updatedQuestions = [...prev.questions];
+
+      updatedQuestions[qIndex] = {
+        ...updatedQuestions[qIndex],
+
+        options: [...updatedQuestions[qIndex].options, ""],
+      };
+
+      return {
+        ...prev,
+        questions: updatedQuestions,
+      };
+    });
   };
 
+  // حذف اختيار
   const removeOption = (qIndex, oIndex) => {
-    const updated = [...formQuiz.questions];
-    updated[qIndex].options = updated[qIndex].options.filter(
-      (_, i) => i !== oIndex,
-    );
-    // لو الإجابة الصح كانت الاختيار اللي اتشال، رجّعها لأول اختيار
-    if (updated[qIndex].correct >= updated[qIndex].options.length) {
-      updated[qIndex].correct = 0;
-    }
-    setFormQuiz({ ...formQuiz, questions: updated });
+    setFormQuiz((prev) => {
+      const updatedQuestions = [...prev.questions];
+
+      const currentQuestion = updatedQuestions[qIndex];
+
+      const updatedOptions = currentQuestion.options.filter(
+        (_, index) => index !== oIndex,
+      );
+
+      let correct = currentQuestion.correct;
+
+      // لو حذفنا الإجابة الصحيحة
+      if (oIndex === correct) {
+        correct = 0;
+      }
+
+      // لو الإجابة الصحيحة بعد الاختيار المحذوف
+      if (oIndex < correct) {
+        correct = correct - 1;
+      }
+
+      // حماية
+      if (correct >= updatedOptions.length) {
+        correct = 0;
+      }
+
+      updatedQuestions[qIndex] = {
+        ...currentQuestion,
+        options: updatedOptions,
+        correct,
+      };
+
+      return {
+        ...prev,
+        questions: updatedQuestions,
+      };
+    });
   };
+
+  // =====================================
+  // Correct Answer
+  // =====================================
 
   const handleCorrectChange = (qIndex, oIndex) => {
-    const updated = [...formQuiz.questions];
-    updated[qIndex].correct = oIndex;
-    setFormQuiz({ ...formQuiz, questions: updated });
+    setFormQuiz((prev) => {
+      const updatedQuestions = [...prev.questions];
+
+      updatedQuestions[qIndex] = {
+        ...updatedQuestions[qIndex],
+        correct: oIndex,
+      };
+
+      return {
+        ...prev,
+        questions: updatedQuestions,
+      };
+    });
   };
 
-  // ================= submit =================
+  // =====================================
+  // Submit
+  // =====================================
+
   const handleSubmit = () => {
-    postQuiz(id, formQuiz);
-    console.log(formQuiz);
-    handleClose();
+    // تحويل البيانات للشكل المطلوب في MongoDB
+    const quizData = {
+      title: formQuiz.title,
+      type: "quiz",
+
+      order: Number(formQuiz.order),
+
+      quiz: {
+        questions: formQuiz.questions.map((question) => ({
+          question: question.text,
+
+          options: question.options,
+
+          correctAnswer: question.correct,
+        })),
+      },
+    };
+
+    console.log("Sending:", quizData);
+
+    quizMutation.mutate(quizData);
   };
 
   return (
     <>
+      {/* =================================
+          Open Button
+      ================================= */}
+
       <Button
-        sx={{ minWidth: "130px" }}
+        sx={{
+          minWidth: "130px",
+        }}
         variant="contained"
         color="primary"
         onClick={handleClickOpen}
       >
-        اضافه كويز
+        إضافة كويز
       </Button>
+
+      {/* =================================
+          Dialog
+      ================================= */}
 
       <Dialog
         fullScreen
         open={open}
         onClose={handleClose}
-        slots={{ transition: Transition }}
+        slots={{
+          transition: Transition,
+        }}
       >
-        <AppBar sx={{ position: "relative" }}>
+        {/* =================================
+            AppBar
+        ================================= */}
+
+        <AppBar
+          sx={{
+            position: "relative",
+          }}
+        >
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={handleClose}>
               <CloseIcon />
             </IconButton>
+
+            <Typography
+              sx={{
+                ml: 2,
+                fontWeight: 700,
+              }}
+            >
+              إضافة كويز
+            </Typography>
           </Toolbar>
         </AppBar>
 
-        <List sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-          {/* ترتيب الدرس */}
+        {/* =================================
+            Form
+        ================================= */}
+
+        <List
+          sx={{
+            p: {
+              xs: 1.5,
+              sm: 3,
+            },
+
+            display: "flex",
+            flexDirection: "column",
+
+            gap: 2,
+
+            maxWidth: "1000px",
+
+            width: "100%",
+
+            mx: "auto",
+
+            boxSizing: "border-box",
+          }}
+        >
+          {/* =================================
+              Order
+          ================================= */}
           <TextField
-            label="ترتيب الدرس اللي الكويز ده بتاعه"
+            label="عنوان الكويز"
+            value={formQuiz.title}
+            onChange={(e) =>
+              setFormQuiz({
+                ...formQuiz,
+                title: e.target.value,
+              })
+            }
+            fullWidth
+          />
+          <TextField
+            label="ترتيب الدرس"
             name="order"
             type="number"
             value={formQuiz.order}
@@ -147,40 +382,61 @@ export default function FullScreenDialogQuiz() {
 
           <Divider />
 
-          {/* الأسئلة */}
+          {/* =================================
+              Questions
+          ================================= */}
+
           {formQuiz.questions.map((question, qIndex) => (
             <Box
               key={qIndex}
               sx={{
                 border: "1px solid",
                 borderColor: "divider",
+
                 borderRadius: "12px",
-                p: 2,
+
+                p: {
+                  xs: 1.5,
+                  sm: 2,
+                },
+
                 display: "flex",
                 flexDirection: "column",
+
                 gap: 1.5,
               }}
             >
+              {/* Question Header */}
+
               <Box
                 sx={{
                   display: "flex",
+
                   alignItems: "center",
+
                   justifyContent: "space-between",
                 }}
               >
-                <Typography sx={{ fontWeight: 700 }}>
+                <Typography
+                  sx={{
+                    fontWeight: 700,
+                  }}
+                >
                   السؤال {qIndex + 1}
                 </Typography>
+
                 {formQuiz.questions.length > 1 && (
                   <IconButton
                     size="small"
                     color="error"
                     onClick={() => removeQuestion(qIndex)}
                   >
-                    {/* <DeleteOutlineIcon fontSize="small" /> */}
+                    <CloseIcon fontSize="small" />
                   </IconButton>
                 )}
               </Box>
+
+              {/* Question */}
 
               <TextField
                 label="نص السؤال"
@@ -191,9 +447,18 @@ export default function FullScreenDialogQuiz() {
                 fullWidth
               />
 
-              <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
-                الاختيارات (حدد دايرة الإجابة الصح)
+              {/* Options Title */}
+
+              <Typography
+                sx={{
+                  fontSize: 13,
+                  color: "text.secondary",
+                }}
+              >
+                الاختيارات — حدد الإجابة الصحيحة
               </Typography>
+
+              {/* Options */}
 
               <RadioGroup
                 value={question.correct}
@@ -204,14 +469,32 @@ export default function FullScreenDialogQuiz() {
                 {question.options.map((option, oIndex) => (
                   <Box
                     key={oIndex}
-                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                    sx={{
+                      display: "flex",
+
+                      alignItems: "center",
+
+                      gap: {
+                        xs: 0.5,
+                        sm: 1,
+                      },
+
+                      mb: 1,
+                    }}
                   >
+                    {/* Radio */}
+
                     <FormControlLabel
                       value={oIndex}
                       control={<Radio />}
                       label=""
-                      sx={{ mr: 0 }}
+                      sx={{
+                        mr: 0,
+                      }}
                     />
+
+                    {/* Option */}
+
                     <TextField
                       size="small"
                       placeholder={`اختيار ${oIndex + 1}`}
@@ -221,9 +504,13 @@ export default function FullScreenDialogQuiz() {
                       }
                       fullWidth
                     />
+
+                    {/* Delete Option */}
+
                     {question.options.length > 2 && (
                       <IconButton
                         size="small"
+                        color="error"
                         onClick={() => removeOption(qIndex, oIndex)}
                       >
                         <CloseIcon fontSize="small" />
@@ -233,20 +520,36 @@ export default function FullScreenDialogQuiz() {
                 ))}
               </RadioGroup>
 
+              {/* Add Option */}
+
               <Button size="small" onClick={() => addOption(qIndex)}>
                 إضافة اختيار
               </Button>
             </Box>
           ))}
 
-          <Button onClick={addQuestion}>إضافة سؤال جديد</Button>
+          {/* =================================
+              Add Question
+          ================================= */}
+
+          <Button variant="outlined" onClick={addQuestion}>
+            إضافة سؤال جديد
+          </Button>
+
+          {/* =================================
+              Submit
+          ================================= */}
 
           <Button
             variant="contained"
             onClick={handleSubmit}
-            sx={{ fontSize: "20px", py: 1 }}
+            disabled={quizMutation.isPending}
+            sx={{
+              fontSize: "20px",
+              py: 1,
+            }}
           >
-            نشر الكويز
+            {quizMutation.isPending ? "جاري نشر الكويز..." : "نشر الكويز"}
           </Button>
         </List>
       </Dialog>

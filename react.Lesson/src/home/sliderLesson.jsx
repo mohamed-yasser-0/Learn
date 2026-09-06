@@ -9,6 +9,10 @@ import {
   Button,
   CircularProgress,
   useTheme,
+  Paper,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import PlayCircleIcon from "@mui/icons-material/PlayCircleRounded";
@@ -22,19 +26,6 @@ import DeleteCourseDialog from "../Dialog/AlertDialog";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import FullScreenDialogQuiz from "../Dialog/examDialog";
-// ---- بيانات وهمية للدرس/الفيديو (front-end فقط) ----
-// const mockLesson = {
-//   title: "Introduction to React Hooks",
-//   order: 3,
-//   description:
-//     "في الدرس ده هنتكلم عن useState وuseEffect وإزاي تستخدمهم صح جوه أي React component، مع أمثلة عملية على أخطاء شائعة وإزاي تتجنبها.",
-//   category: "Frontend",
-//   instructor: "Marcus Rivera",
-//   duration: "18m 40s",
-//   students: 7340,
-//   rating: 4.8,
-//   isFree: true,
-// };
 
 export default function LessonsPage() {
   const theme = useTheme();
@@ -44,6 +35,7 @@ export default function LessonsPage() {
     "6a9d09792b72179995d1dfda",
   );
   const [showSummary, setShowSummary] = useState(false);
+  const [answers, setAnswers] = useState({});
   console.log("lessonId", activeLessonId);
   const { getLessons, lessons, progress, user, loadingLessons } =
     React.useContext(AuthContext);
@@ -84,7 +76,24 @@ export default function LessonsPage() {
   const activeLesson = lesson?.data?.lessons?.find(
     (lesson) => lesson._id === activeLessonId,
   );
-  console.log("activeLesson", activeLesson?.videoUrl);
+  const questions = lesson?.quiz?.questions || [];
+
+  const handleAnswerChange = (questionIndex, answerIndex) => {
+    setAnswers((prev) => ({ ...prev, [questionIndex]: Number(answerIndex) }));
+  };
+  const handleSubmit = () => {
+    let correct = 0;
+    questions.forEach((question, index) => {
+      if (answers[index] === question.correctAnswer) {
+        correct++;
+      }
+    });
+    const total = questions.length;
+    const percentage = total ? Math.round((correct / total) * 100) : 0;
+    const result = { correct, total, percentage };
+    console.log("Quiz Result:", result);
+    true?.(result);
+  };
   const isYouTube =
     activeLesson?.videoUrl.includes("youtube.com") ||
     activeLesson?.videoUrl.includes("youtu.be");
@@ -200,7 +209,13 @@ export default function LessonsPage() {
                 );
               })}
 
-            <Box sx={{ width: "100%", textAlign: "center",justifyContent:"space-between" }}>
+            <Box
+              sx={{
+                width: "100%",
+                textAlign: "center",
+                justifyContent: "space-between",
+              }}
+            >
               {user?.role === "ADMIN" && <FullScreenDialogLesson />}
               {user?.role === "ADMIN" && <FullScreenDialogQuiz />}
             </Box>
@@ -216,34 +231,83 @@ export default function LessonsPage() {
       {/* ---------------- الجنب التاني: فيديو الدرس + البيانات المعروفة ---------------- */}
       <Box sx={{ flex: 1, minWidth: 0 }}>
         {/* الفيديو */}
-        <Box
-          sx={{
-            position: "relative",
-            borderRadius: "18px",
-            overflow: "hidden",
-            border: "1px solid",
-            borderColor: "divider",
-            aspectRatio: "16/9",
-            background: `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.background.paper} 60%, ${theme.palette.background.default} 100%)`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            mb: 3,
-          }}
-        >
+        {activeLesson?.type === "quiz" ? (
+          <Box sx={{ width: "100%", minHeight: "400px", p: { xs: 2, sm: 4 } }}>
+            {/* عنوان الكويز */}
+            <Typography
+              sx={{ fontSize: { xs: 22, sm: 28 }, fontWeight: 700, mb: 1 }}
+            >
+              {lesson.title}
+            </Typography>
+            <Typography sx={{ color: "text.secondary", mb: 3 }}>
+              عدد الأسئلة: {questions.length}
+            </Typography>
+            {/* الأسئلة */}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              {questions.map((question, qIndex) => (
+                <Paper
+                  key={qIndex}
+                  elevation={0}
+                  sx={{
+                    p: { xs: 2, sm: 3 },
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: "16px",
+                  }}
+                >
+                  <Typography sx={{ fontSize: 18, fontWeight: 700, mb: 2 }}>
+                    {qIndex + 1}. {question.question}
+                  </Typography>
+                  <RadioGroup
+                    value={answers[qIndex] ?? ""}
+                    onChange={(e) => handleAnswerChange(qIndex, e.target.value)}
+                  >
+                    {question.options.map((option, oIndex) => (
+                      <FormControlLabel
+                        key={oIndex}
+                        value={oIndex}
+                        control={<Radio />}
+                        label={option}
+                        sx={{ mb: 0.5 }}
+                      />
+                    ))}
+                  </RadioGroup>
+                </Paper>
+              ))}
+            </Box>
+            {/* Submit */}
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              sx={{ mt: 3, px: 4, py: 1.2, borderRadius: "10px", fontSize: 16 }}
+            >
+              تسليم الامتحان
+            </Button>
+          </Box>
+        ) : (
           <Box
             sx={{
-              position: "absolute",
-              top: 16,
-              left: 16,
+              position: "relative",
+              borderRadius: "18px",
+              overflow: "hidden",
+              border: "1px solid",
+              borderColor: "divider",
+              aspectRatio: "16/9",
+              background: `linear-gradient(
+        135deg,
+        ${theme.palette.background.default} 0%,
+        ${theme.palette.background.paper} 60%,
+        ${theme.palette.background.default} 100%
+      )`,
               display: "flex",
-              gap: 1,
-              zIndex: 2,
+              alignItems: "center",
+              justifyContent: "center",
+              mb: 3,
             }}
           >
+            {renderPlayer()}
           </Box>
-          {renderPlayer()}
-        </Box>
+        )}
 
         {/* عنوان الدرس */}
         <Typography

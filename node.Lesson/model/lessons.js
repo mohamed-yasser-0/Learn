@@ -34,9 +34,6 @@ const lessonSchema = new mongoose.Schema({
 
   duration: {
     type: Number,
-    required: function () {
-      return this.type === "video";
-    },
   },
 
   summaryPoints: [
