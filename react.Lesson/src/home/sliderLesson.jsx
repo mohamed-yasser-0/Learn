@@ -23,7 +23,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../theme/context";
 import FullScreenDialogLesson from "../Dialog/DialogLesson";
 import DeleteCourseDialog from "../Dialog/AlertDialog";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import FullScreenDialogQuiz from "../Dialog/examDialog";
 
@@ -36,6 +36,8 @@ export default function LessonsPage() {
   );
   const [showSummary, setShowSummary] = useState(false);
   const [answers, setAnswers] = useState({});
+  const [finalResult, setFinalResult] = useState(false);
+  const [quizResult, setQuizResult] = useState({});
   console.log("lessonId", activeLessonId);
   const { getLessons, lessons, progress, user, loadingLessons } =
     React.useContext(AuthContext);
@@ -46,6 +48,31 @@ export default function LessonsPage() {
   }, [id]);
   const token = localStorage.getItem("token");
   console.log("token", token);
+  const progressMutation = useMutation({
+    mutationFn: async (progressData) => {
+      const { data } = await axios.post(
+        `https://learn-production-6c88.up.railway.app/api/progress/watch/${id}`,
+        progressData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      return data;
+    },
+
+    onSuccess: (data) => {
+      console.log("Progress uploaded:", data);
+    },
+
+    onError: (error) => {
+      console.error("Error uploading progress:", error);
+    },
+  });
+
   const {
     data: lesson,
     isLoading,
@@ -71,32 +98,85 @@ export default function LessonsPage() {
   if (isLoading) return <p style={{ marginTop: "5rem" }}>Loading...</p>;
 
   if (isError) return <p style={{ marginTop: "5rem" }}>Error loading lesson</p>;
+  // const {
+  //   data: Progresslesson,
+  //   isLoading: loadingProgress,
+  //   isError: errorProgress,
+  // } = useQuery({
+  //   queryKey: ["progress", id],
+
+  //   queryFn: async () => {
+  //     const { data } = await axios.get(
+  //       `https://learn-production-6c88.up.railway.app/api/progress/watch/${id}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       },
+  //     );
+
+  //     return data;
+  //   },
+
+  //   enabled: !!id && !!token,
+  // });
+  // if (isLoading) return <p style={{ marginTop: "5rem" }}>Loading...</p>;
+
+  // if (isError) return <p style={{ marginTop: "5rem" }}>Error loading lesson</p>;
 
   console.log(lesson.data.lessons);
   const activeLesson = lesson?.data?.lessons?.find(
     (lesson) => lesson._id === activeLessonId,
   );
-  const questions = lesson?.quiz?.questions || [];
+  const questions = activeLesson?.quiz?.questions || [];
 
   const handleAnswerChange = (questionIndex, answerIndex) => {
     setAnswers((prev) => ({ ...prev, [questionIndex]: Number(answerIndex) }));
   };
   const handleSubmit = () => {
     let correct = 0;
+
     questions.forEach((question, index) => {
       if (answers[index] === question.correctAnswer) {
         correct++;
       }
     });
+
     const total = questions.length;
+
     const percentage = total ? Math.round((correct / total) * 100) : 0;
-    const result = { correct, total, percentage };
+
+    const result = {
+      correct,
+      total,
+      percentage,
+    };
+
     console.log("Quiz Result:", result);
-    true?.(result);
+
+    // البيانات اللي هتتبعت للـ backend
+    const progressData = {
+      courseId: id,
+      lessonId: activeLessonId,
+      duration: 120,
+      userId: "USER_ID_HERE",
+
+      // حسب الـ schema بتاعك
+      quizScore: [correct, total, percentage],
+    };
+
+    progressMutation.mutate(progressData);
+
+    setFinalResult(true);
+    setQuizResult(result);
+
+    console.log("quizResult", answers);
   };
+
   const isYouTube =
-    activeLesson?.videoUrl.includes("youtube.com") ||
-    activeLesson?.videoUrl.includes("youtu.be");
+    activeLesson?.videoUrl?.includes("youtube.com") ||
+    activeLesson?.videoUrl?.includes("youtu.be") ||
+    false;
   const renderPlayer = () => {
     if (!activeLesson?.videoUrl) {
       return (
@@ -200,7 +280,9 @@ export default function LessonsPage() {
                     key={lesson?._id}
                     variant={isDone ? "outlined" : "contained"}
                     onClick={() => {
-                      // navigate(`/Learn/lessons/${lesson._id}`);
+                      setAnswers({});
+                      setFinalResult(false);
+                      setQuizResult({});
                       setActiveLessonId(lesson._id);
                     }}
                   >
@@ -233,56 +315,415 @@ export default function LessonsPage() {
         {/* الفيديو */}
         {activeLesson?.type === "quiz" ? (
           <Box sx={{ width: "100%", minHeight: "400px", p: { xs: 2, sm: 4 } }}>
-            {/* عنوان الكويز */}
-            <Typography
-              sx={{ fontSize: { xs: 22, sm: 28 }, fontWeight: 700, mb: 1 }}
-            >
-              {lesson.title}
-            </Typography>
-            <Typography sx={{ color: "text.secondary", mb: 3 }}>
-              عدد الأسئلة: {questions.length}
-            </Typography>
-            {/* الأسئلة */}
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              {questions.map((question, qIndex) => (
-                <Paper
-                  key={qIndex}
-                  elevation={0}
+            {finalResult ? (
+              <>
+                {/* عنوان الكويز */}
+                <Typography
+                  sx={{ fontSize: { xs: 22, sm: 28 }, fontWeight: 700, mb: 1 }}
+                >
+                  {activeLesson?.title}
+                </Typography>
+                <Typography sx={{ color: "text.secondary", mb: 3 }}>
+                  عدد الأسئلة: {questions.length}
+                </Typography>
+                {/* الأسئلة */}
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  {questions.map((question, qIndex) => (
+                    <Paper
+                      key={qIndex}
+                      elevation={0}
+                      sx={{
+                        p: { xs: 2, sm: 3 },
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: "16px",
+                      }}
+                    >
+                      <Typography sx={{ fontSize: 18, fontWeight: 700, mb: 2 }}>
+                        {qIndex + 1}. {question.question}
+                      </Typography>
+                      <RadioGroup
+                        value={answers[qIndex] ?? ""}
+                        onChange={(e) =>
+                          handleAnswerChange(qIndex, e.target.value)
+                        }
+                      >
+                        {question.options.map((option, oIndex) =>
+                          answers[qIndex] === question.correctAnswer &&
+                          answers[qIndex] === oIndex ? (
+                            <FormControlLabel
+                              disabled
+                              key={oIndex}
+                              value={oIndex}
+                              control={<Radio />}
+                              label={
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                  }}
+                                >
+                                  {option}
+
+                                  {oIndex === question.correctAnswer && (
+                                    <Typography
+                                      component="span"
+                                      sx={{
+                                        color: "success.main",
+                                        fontWeight: 700,
+                                        fontSize: 18,
+                                      }}
+                                    >
+                                      ✓
+                                    </Typography>
+                                  )}
+                                </Box>
+                              }
+                            />
+                          ) : (
+                            <FormControlLabel
+                              disabled
+                              key={oIndex}
+                              value={oIndex}
+                              control={
+                                <Radio
+                                  sx={{
+                                    color:
+                                      oIndex === question.correctAnswer
+                                        ? "success.main"
+                                        : answers[qIndex] === oIndex
+                                          ? "error.main"
+                                          : "text.secondary",
+
+                                    "&.Mui-checked": {
+                                      color:
+                                        oIndex === question.correctAnswer
+                                          ? "success.main"
+                                          : "error.main",
+                                    },
+                                  }}
+                                />
+                              }
+                              label={
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    width: "100%",
+                                    gap: 2,
+                                  }}
+                                >
+                                  <Typography
+                                    sx={{
+                                      fontSize: "15px",
+                                      fontWeight:
+                                        oIndex === question.correctAnswer ||
+                                        answers[qIndex] === oIndex
+                                          ? 600
+                                          : 400,
+                                    }}
+                                  >
+                                    {option}
+                                  </Typography>
+
+                                  {oIndex === question.correctAnswer && (
+                                    <Typography
+                                      sx={{
+                                        color: "success.main",
+                                        fontSize: "14px",
+                                        fontWeight: 700,
+                                      }}
+                                    >
+                                      ✓ إجابة صحيحة
+                                    </Typography>
+                                  )}
+
+                                  {answers[qIndex] === oIndex &&
+                                    oIndex !== question.correctAnswer && (
+                                      <Typography
+                                        sx={{
+                                          color: "error.main",
+                                          fontSize: "14px",
+                                          fontWeight: 700,
+                                        }}
+                                      >
+                                        ✕ إجابتك
+                                      </Typography>
+                                    )}
+                                </Box>
+                              }
+                              sx={{
+                                width: "100%",
+                                m: 0,
+                                mb: 1,
+
+                                px: 1,
+                                py: 0.7,
+
+                                border: "1px solid",
+
+                                borderColor:
+                                  oIndex === question.correctAnswer
+                                    ? "success.light"
+                                    : answers[qIndex] === oIndex
+                                      ? "error.light"
+                                      : "divider",
+
+                                borderRadius: "8px",
+
+                                bgcolor:
+                                  oIndex === question.correctAnswer
+                                    ? "success.50"
+                                    : answers[qIndex] === oIndex
+                                      ? "error.50"
+                                      : "transparent",
+
+                                transition: "0.2s",
+
+                                "&:hover": {
+                                  bgcolor: "action.hover",
+                                },
+
+                                "& .MuiFormControlLabel-label": {
+                                  width: "100%",
+                                },
+                              }}
+                            />
+                          ),
+                        )}
+                      </RadioGroup>
+                    </Paper>
+                  ))}
+                </Box>
+                <Box
                   sx={{
-                    p: { xs: 2, sm: 3 },
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: "16px",
+                    width: "100%",
+                    minHeight: { xs: "auto", sm: "450px" },
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    p: { xs: 2, sm: 4 },
                   }}
                 >
-                  <Typography sx={{ fontSize: 18, fontWeight: 700, mb: 2 }}>
-                    {qIndex + 1}. {question.question}
-                  </Typography>
-                  <RadioGroup
-                    value={answers[qIndex] ?? ""}
-                    onChange={(e) => handleAnswerChange(qIndex, e.target.value)}
+                  <Box
+                    sx={{
+                      width: "100%",
+                      maxWidth: "650px",
+                      textAlign: "center",
+                      p: { xs: 2.5, sm: 5 },
+                      borderRadius: "28px",
+                      border: "1px solid",
+                      borderColor: "divider",
+                      background: "background.paper",
+                      boxShadow: "0 15px 50px rgba(0,0,0,0.08)",
+                    }}
                   >
-                    {question.options.map((option, oIndex) => (
-                      <FormControlLabel
-                        key={oIndex}
-                        value={oIndex}
-                        control={<Radio />}
-                        label={option}
-                        sx={{ mb: 0.5 }}
-                      />
-                    ))}
-                  </RadioGroup>
-                </Paper>
-              ))}
-            </Box>
-            {/* Submit */}
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-              sx={{ mt: 3, px: 4, py: 1.2, borderRadius: "10px", fontSize: 16 }}
-            >
-              تسليم الامتحان
-            </Button>
+                    {/* Icon + Title جنب بعض على الموبايل بدل تحت بعض */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: { xs: "row", sm: "column" },
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: { xs: 1.5, sm: 0 },
+                        mb: { xs: 2, sm: 1 },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: { xs: 44, sm: 75 },
+                          height: { xs: 44, sm: 75 },
+                          mb: { xs: 0, sm: 2 },
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          background: "primary.main",
+                          color: "primary.contrastText",
+                          fontSize: { xs: 22, sm: 36 },
+                          flexShrink: 0,
+                        }}
+                      >
+                        ✓
+                      </Box>
+
+                      <Typography
+                        variant="h4"
+                        sx={{
+                          fontWeight: 800,
+                          fontSize: { xs: 20, sm: 34 },
+                          mb: 0,
+                        }}
+                      >
+                        نتيجة الكويز
+                      </Typography>
+                    </Box>
+
+                    <Typography
+                      sx={{
+                        color: "text.secondary",
+                        mb: { xs: 2.5, sm: 4 },
+                        fontSize: { xs: 13.5, sm: 16 },
+                      }}
+                    >
+                      أحسنت! لقد انتهيت من حل الكويز 🎉
+                    </Typography>
+
+                    {/* الدايرة أصغر على الموبايل */}
+                    <Box
+                      sx={{
+                        width: { xs: 110, sm: 170 },
+                        height: { xs: 110, sm: 170 },
+                        mx: "auto",
+                        mb: { xs: 2.5, sm: 4 },
+                        borderRadius: "50%",
+                        border: { xs: "7px solid", sm: "10px solid" },
+                        borderColor: "primary.main",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: { xs: 26, sm: 42 },
+                          fontWeight: 900,
+                          lineHeight: 1,
+                        }}
+                      >
+                        {quizResult.percentage}%
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "text.secondary",
+                          mt: { xs: 0.3, sm: 1 },
+                          fontSize: { xs: 11, sm: 14 },
+                        }}
+                      >
+                        النتيجة
+                      </Typography>
+                    </Box>
+
+                    {/* Stats: صف واحد جنب بعض حتى على الموبايل، مش عمود */}
+                    <Box
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: { xs: 1.2, sm: 2 },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          p: { xs: 1.5, sm: 2.5 },
+                          borderRadius: "18px",
+                          backgroundColor: "action.hover",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            fontSize: { xs: 22, sm: 32 },
+                            fontWeight: 800,
+                            color: "success.main",
+                          }}
+                        >
+                          {quizResult.correct}
+                        </Typography>
+                        <Typography
+                          color="text.secondary"
+                          sx={{ fontSize: { xs: 12, sm: 14 } }}
+                        >
+                          إجابة صحيحة
+                        </Typography>
+                      </Box>
+
+                      <Box
+                        sx={{
+                          p: { xs: 1.5, sm: 2.5 },
+                          borderRadius: "18px",
+                          backgroundColor: "action.hover",
+                        }}
+                      >
+                        <Typography
+                          sx={{ fontSize: { xs: 22, sm: 32 }, fontWeight: 800 }}
+                        >
+                          {quizResult.total}
+                        </Typography>
+                        <Typography
+                          color="text.secondary"
+                          sx={{ fontSize: { xs: 12, sm: 14 } }}
+                        >
+                          إجمالي الأسئلة
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
+              </>
+            ) : (
+              <>
+                {/* عنوان الكويز */}
+                <Typography
+                  sx={{ fontSize: { xs: 22, sm: 28 }, fontWeight: 700, mb: 1 }}
+                >
+                  {activeLesson?.title}
+                </Typography>
+                <Typography sx={{ color: "text.secondary", mb: 3 }}>
+                  عدد الأسئلة: {questions.length}
+                </Typography>
+                {/* الأسئلة */}
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                  {questions.map((question, qIndex) => (
+                    <Paper
+                      key={qIndex}
+                      elevation={0}
+                      sx={{
+                        p: { xs: 2, sm: 3 },
+                        border: "1px solid",
+                        borderColor: "divider",
+                        borderRadius: "16px",
+                      }}
+                    >
+                      <Typography sx={{ fontSize: 18, fontWeight: 700, mb: 2 }}>
+                        {qIndex + 1}. {question.question}
+                      </Typography>
+                      <RadioGroup
+                        value={answers[qIndex] ?? ""}
+                        onChange={(e) =>
+                          handleAnswerChange(qIndex, e.target.value)
+                        }
+                      >
+                        {question.options.map((option, oIndex) => (
+                          <FormControlLabel
+                            key={oIndex}
+                            value={oIndex}
+                            control={<Radio />}
+                            label={option}
+                            sx={{ mb: 0.5 }}
+                          />
+                        ))}
+                      </RadioGroup>
+                    </Paper>
+                  ))}
+                </Box>
+                {/* Submit */}
+                <Button
+                  variant="contained"
+                  onClick={handleSubmit}
+                  sx={{
+                    mt: 3,
+                    px: 4,
+                    py: 1.2,
+                    borderRadius: "10px",
+                    fontSize: 16,
+                  }}
+                >
+                  تسليم الامتحان
+                </Button>
+              </>
+            )}
           </Box>
         ) : (
           <Box
@@ -310,22 +751,15 @@ export default function LessonsPage() {
         )}
 
         {/* عنوان الدرس */}
-        <Typography
-          sx={{
-            fontSize: 12,
-            color: "primary.light",
-            fontWeight: 600,
-            letterSpacing: 0.5,
-            mb: 0.5,
-          }}
-        >
-          LESSON {"mockLesson.order"}
-        </Typography>
-        <Typography
-          sx={{ fontSize: 24, fontWeight: 700, color: "text.primary", mb: 2 }}
-        >
-          {activeLesson?.title}
-        </Typography>
+        {activeLesson?.type === "quiz" ? (
+          <Divider sx={{ mb: 2 }} />
+        ) : (
+          <Typography
+            sx={{ fontSize: 24, fontWeight: 700, color: "text.primary", mb: 2 }}
+          >
+            {activeLesson?.title}
+          </Typography>
+        )}
         {/* البيانات المعروفة تحت الفيديو */}
         <Box sx={{ mb: 3 }}>
           <Stack

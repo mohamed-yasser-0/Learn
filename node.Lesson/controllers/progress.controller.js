@@ -6,21 +6,12 @@ const appError = require("../utils/appError.js");
 const { SUCCESS, FAIL } = require("../utils/httpStatusText.js");
 
 const postProgress = AsyncWrapper(async (req, res, next) => {
-    const id = req.params.idLesson;
+    const {id} = req.body;
 
     const lesson = await Lesson.findById(id);
 
     if (!lesson) {
         return next(appError.create("الدرس غير موجود", 404, FAIL));
-    }
-
-    const existingProgress = await Progress.findOne({
-        userId: req.user.id,
-        lessonId: id
-    });
-
-    if (existingProgress) {
-        return next(appError.create("تم تسجيل هذا الدرس مسبقاً", 400, FAIL));
     }
 
     const progress = new Progress({

@@ -4,9 +4,8 @@ const verifyToken = require("../middleware/verifyToken")
 const router = express.Router()
 
 
-router.route("/watch/:idLesson")
+router.route("/watch/:idCourse")
     .post(verifyToken, postProgress)
-router.route("/")
     .get(verifyToken, getProgress)
 
 
