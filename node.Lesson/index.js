@@ -1,5 +1,6 @@
 const express = require("express")
 const cors = require("cors")
+require('dotenv').config();
 
 const mongoose = require('mongoose');
 
@@ -12,7 +13,6 @@ const examRouter = require("./routes/exam.routes.js");
 const examDegRouter = require("./routes/deg.routes.js");
 const progress = require("./routes/progress.routes.js");
 const usersRouter = require("./routes/users.routes.js");
-require('dotenv').config();
 
 const app = express()
 app.use(cors())
@@ -37,12 +37,12 @@ app.use((req, res, next) => {
     res.json({ status: 'ERROR', message: 'this resource not found' })
 })
 
-app.use((error, req, res, next) => {
-    res.status(error.statusCode || 500).json({
-        status: error.statusText || 'ERROR',
-        message: error.message || 'Something went wrong'
-    });
-});
+// app.use((error, req, res, next) => {
+//     res.status(error.statusCode || 500).json({
+//         status: error.statusText || 'ERROR',
+//         message: error.message || 'Something went wrong'
+//     });
+// });
 const PORT = process.env.PORT || 1000
 
 app.listen(PORT, () => {

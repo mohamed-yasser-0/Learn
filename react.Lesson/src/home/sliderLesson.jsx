@@ -15,6 +15,7 @@ import {
   Radio,
   Alert,
   Snackbar,
+  IconButton,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import PlayCircleIcon from "@mui/icons-material/PlayCircleRounded";
@@ -25,7 +26,7 @@ import DeleteCourseDialog from "../Dialog/AlertDialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import FullScreenDialogQuiz from "../Dialog/examDialog";
-
+import CheckIcon from "@mui/icons-material/Check";
 export default function LessonsPage() {
   const theme = useTheme();
   const { id } = useParams();
@@ -108,6 +109,7 @@ export default function LessonsPage() {
     data: Progresslesson,
     isLoading: loadingProgress,
     isError: errorProgress,
+    refetch: fetchProgress,
   } = useQuery({
     queryKey: ["progress"],
 
@@ -124,19 +126,18 @@ export default function LessonsPage() {
       return data;
     },
 
-    enabled: !!id && !!token,
+    enabled: false, // مش هيشتغل لوحده خالص
   });
-  console.log("Progresslesson", Progresslesson);
   const activeLessonIndex = useMemo(
     () => allLessons.findIndex((l) => l._id === selectedLessonId),
     [allLessons, selectedLessonId],
   );
-
   const activeLesson = allLessons[activeLessonIndex];
 
   const questions = activeLesson?.quiz?.questions || [];
 
   const selectLesson = (lessonId) => {
+    fetchProgress();
     const lessonProgress = Progresslesson?.data?.find(
       (p) => p?.lessonId === lessonId,
     );
@@ -253,9 +254,8 @@ export default function LessonsPage() {
     );
   };
 
-  if (isError) return <p style={{ marginTop: "5rem" }}>Error loading lesson</p>;
-  if (errorProgress)
-    return <p style={{ marginTop: "5rem" }}>Error loading progress</p>;
+  if (isError);
+  if (errorProgress);
 
   return (
     <Box
@@ -306,20 +306,32 @@ export default function LessonsPage() {
                 const isDone = progress?.data?.some(
                   (e) => e.lessonId === l._id,
                 );
-
+                console.log(Progresslesson);
                 return (
                   <Button
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
                     key={l?._id}
                     variant={
-                      l._id === selectedLessonId
-                        ? "contained"
-                        : isDone
-                          ? "outlined"
-                          : "contained"
+                      l._id === selectedLessonId ? "contained" : "outlined"
                     }
                     onClick={() => selectLesson(l._id)}
                   >
-                    {l?.title}
+                    <Box>
+                      {Progresslesson?.data?.some(
+                        (progress) => progress.lessonId === l._id,
+                      ) && <CheckIcon />}
+                    </Box>
+                    <Typography
+                      sx={{
+                        fontWeight: 700,
+                        mb: 1,
+                      }}
+                    >
+                      {l?.title}
+                    </Typography>
                   </Button>
                 );
               })}

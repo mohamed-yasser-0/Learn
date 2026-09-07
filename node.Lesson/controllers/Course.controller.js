@@ -6,7 +6,11 @@ const appError = require("../utils/appError.js");
 
 
 const postCourse = AsyncWrapper(async (req, res, next) => {
-    const course = new Course(req.body);
+    const course = new Course({
+        ...req.body,
+        imgeCourse: req.file?.path,
+    });
+
     await course.save();
 
     res.status(201).json({
