@@ -423,7 +423,7 @@ function RegisterPage() {
             color="primary"
             fullWidth
             onClick={() => {
-              navigate("/login");
+              navigate("/Learn/login");
             }}
             sx={{ py: 1.4 }}
           >
@@ -616,7 +616,7 @@ function RegisterPage() {
           <Link
             component="button"
             onClick={() => {
-              navigate("/login");
+              navigate("/Learn/login");
             }}
             underline="hover"
             sx={{ color: "primary.light", fontWeight: 700 }}
@@ -683,7 +683,7 @@ function ForgotPage() {
             variant="outlined"
             color="primary"
             fullWidth
-            onClick={() => navigate("/forgot")}
+            onClick={() => navigate("/Learn/forgot")}
             sx={{ py: 1.4 }}
           >
             العودة لتسجيل الدخول
@@ -723,7 +723,7 @@ function ForgotPage() {
           <Typography sx={{ textAlign: "center", fontSize: 14 }}>
             <Link
               component="button"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/Learn/login")}
               underline="hover"
               sx={{ color: "primary.light" }}
             >

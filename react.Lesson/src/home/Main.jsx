@@ -93,7 +93,6 @@ function Sidebar({ open, onClose, selected, setSelected }) {
       {/* User card */}
       <Box
         onClick={() => {
-          onClose();
           navigate("/Learn/profile");
         }}
         sx={{
@@ -235,6 +234,7 @@ function Sidebar({ open, onClose, selected, setSelected }) {
 export default function Main() {
   const { course, user, progress, getProgress, loadingProgress, loadingAuth } =
     React.useContext(AuthContext);
+  const navigate = useNavigate();
   useEffect(() => {
     getProgress();
   }, []);
@@ -283,6 +283,9 @@ export default function Main() {
             <Box sx={{ p: { xs: 2, md: 4 } }}>
               {/* ── Welcome banner ── */}
               <Box
+                onClick={() => {
+                  navigate("/Learn/profile");
+                }}
                 sx={{
                   display: { xs: "block", md: "none" },
                   bgcolor: "primary.main",
@@ -291,6 +294,12 @@ export default function Main() {
                   mb: 4,
                   position: "relative",
                   overflow: "hidden",
+                  pointerEvents: "auto",
+                  cursor: "pointer",
+
+                  "&:hover": {
+                    bgcolor: "primary.dark",
+                  },
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
