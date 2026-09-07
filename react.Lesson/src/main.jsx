@@ -18,5 +18,5 @@ createRoot(document.getElementById("root")).render(
         </HashRouter>
       </AuthProvider>
     </QueryClientProvider>
-  </StrictMode>,
+  </StrictMode>
 );
