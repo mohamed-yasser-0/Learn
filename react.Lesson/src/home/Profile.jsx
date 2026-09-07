@@ -15,13 +15,34 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { AuthContext } from "../theme/context";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 const ProfilePage = ({ gradesData, stats }) => {
   const { user, loadingAuth, loadingProgress } = React.useContext(AuthContext);
 
   const rows = Array.isArray(gradesData) ? gradesData : [];
   const firstLetter = user?.name?.trim()[0] || "؟";
+  const token = localStorage.getItem("token");
+  const { data: Progresslesson, isError: errorProgress } = useQuery({
+    queryKey: ["progress"],
 
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `https://learn-production-6c88.up.railway.app/api/progress/watch`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      return data;
+    },
+
+    enabled: !!token,
+  });
+    const totalPoints = Progresslesson?.data?.reduce((acc, item) => acc + item.quizScore[0], 0);
   return (
     <Box
       sx={{
@@ -107,12 +128,12 @@ const ProfilePage = ({ gradesData, stats }) => {
             {[
               {
                 label: "إجمالي الدرجات",
-                value: stats?.totalPoints || 0,
+                value: totalPoints || 0,
                 color: "primary.main",
               },
               {
                 label: "عدد الاختبارات",
-                value: stats?.testCount || 0,
+                value: Progresslesson?.data?.length || 0,
                 color: "secondary.main",
               },
               {

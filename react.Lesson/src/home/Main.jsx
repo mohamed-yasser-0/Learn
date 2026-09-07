@@ -27,7 +27,7 @@ import { AuthContext } from "../theme/context";
 import CourseCard from "./CourseCard";
 import ExamCard from "./ExamCard";
 import FullScreenDialogExam from "../Dialog/examDialog";
-
+import { useNavigate } from "react-router-dom";
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
 const CATEGORIES = [
@@ -43,6 +43,7 @@ const CATEGORIES = [
 
 // ─── SIDEBAR ──────────────────────────────────────────────────────────────────
 function Sidebar({ open, onClose, selected, setSelected }) {
+  const navigate = useNavigate();
   const { user, progress, exams } = React.useContext(AuthContext);
   const SIDEBAR_ITEMS = [
     // { icon: <DashboardOutlinedIcon />, label: "لوحة التحكم", value: "dashboard" },
@@ -52,20 +53,20 @@ function Sidebar({ open, onClose, selected, setSelected }) {
       value: "courses",
     },
     // { icon: <BookmarkBorderIcon />, label: "المحفوظات", value: "saved" },
-    {
-      icon: (
-        <Badge
-          color="error"
-          variant="dot"
-          overlap="circular"
-          invisible={!(exams.length >= 1)}
-        >
-          <QuizIcon />
-        </Badge>
-      ),
-      label: "امتحانات",
-      value: "exams",
-    },
+    // {
+    //   icon: (
+    //     <Badge
+    //       color="error"
+    //       variant="dot"
+    //       overlap="circular"
+    //       invisible={!(exams.length >= 1)}
+    //     >
+    //       <QuizIcon />
+    //     </Badge>
+    //   ),
+    //   label: "امتحانات",
+    //   value: "exams",
+    // },
     // { icon: <SettingsOutlinedIcon />, label: "الإعدادات", value: "settings" },
   ];
 
@@ -91,7 +92,23 @@ function Sidebar({ open, onClose, selected, setSelected }) {
     >
       {/* User card */}
       <Box
-        sx={{ p: 2.5, bgcolor: "primary.main", mx: 2, mt: 2, borderRadius: 2 }}
+        onClick={() => {
+          onClose();
+          navigate("/Learn/profile");
+        }}
+        sx={{
+          p: 2.5,
+          bgcolor: "primary.main",
+          mx: 2,
+          mt: 2,
+          borderRadius: 2,
+          pointerEvents: "auto",
+          cursor: "pointer",
+
+          "&:hover": {
+            bgcolor: "primary.dark",
+          },
+        }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           <Avatar

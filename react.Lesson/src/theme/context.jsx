@@ -3,6 +3,7 @@
 import { Alert, Snackbar } from "@mui/material";
 import { createContext, useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 export const AuthContext = createContext();
 
@@ -415,7 +416,6 @@ export function AuthProvider({ children }) {
       setSingleExamLoading(false);
     }
   };
-
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {

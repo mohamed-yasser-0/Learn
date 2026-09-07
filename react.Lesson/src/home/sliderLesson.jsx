@@ -2,9 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Typography,
-  Chip,
   Stack,
-  Avatar,
   Divider,
   Button,
   CircularProgress,
@@ -15,11 +13,10 @@ import {
   Radio,
   Alert,
   Snackbar,
-  IconButton,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import PlayCircleIcon from "@mui/icons-material/PlayCircleRounded";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { AuthContext } from "../theme/context";
 import FullScreenDialogLesson from "../Dialog/DialogLesson";
 import DeleteCourseDialog from "../Dialog/AlertDialog";
@@ -36,9 +33,8 @@ export default function LessonsPage() {
   const [answers, setAnswers] = useState({});
   const [finalResult, setFinalResult] = useState(false);
   const [quizResult, setQuizResult] = useState({});
-  const [submitError, setSubmitError] = useState(null);
 
-  const { getLessons, lessons, progress, user, loadingLessons } =
+  const { getLessons, lessons, user, loadingLessons, setSnackbar } =
     React.useContext(AuthContext);
   const delname = "course";
 
@@ -65,15 +61,21 @@ export default function LessonsPage() {
     },
 
     onSuccess: () => {
-      setSubmitError(null);
       queryClient.invalidateQueries({ queryKey: ["progress"] });
+      setSnackbar({
+        open: true,
+        message: "تم حفظ التقدم بنجاح 🎉",
+        severity: "success",
+      });
     },
 
     onError: (error) => {
       console.error("Error uploading progress:", error);
-      setSubmitError(
-        "تم حساب النتيجة، لكن حصلت مشكلة في حفظها. حاول تاني لو النتيجة مش ظاهرة في تقدمك.",
-      );
+      setSnackbar({
+        open: true,
+        message: "حدث خطأ أثناء حفظ التقدم",
+        severity: "error",
+      });
     },
   });
 
@@ -104,13 +106,8 @@ export default function LessonsPage() {
     () => lesson?.data?.lessons || [],
     [lesson?.data?.lessons],
   );
-  const selectedLessonId = activeLessonId ?? allLessons[0]?._id ?? null;
-  const {
-    data: Progresslesson,
-    isLoading: loadingProgress,
-    isError: errorProgress,
-    refetch: fetchProgress,
-  } = useQuery({
+  const selectedLessonId = activeLessonId ?? null;
+  const { data: Progresslesson, isError: errorProgress } = useQuery({
     queryKey: ["progress"],
 
     queryFn: async () => {
@@ -126,7 +123,7 @@ export default function LessonsPage() {
       return data;
     },
 
-    enabled: false, // مش هيشتغل لوحده خالص
+    enabled: !!id && !!token,
   });
   const activeLessonIndex = useMemo(
     () => allLessons.findIndex((l) => l._id === selectedLessonId),
@@ -137,13 +134,11 @@ export default function LessonsPage() {
   const questions = activeLesson?.quiz?.questions || [];
 
   const selectLesson = (lessonId) => {
-    fetchProgress();
     const lessonProgress = Progresslesson?.data?.find(
       (p) => p?.lessonId === lessonId,
     );
     console.log("lessonProgress", lessonProgress);
     setActiveLessonId(lessonId);
-    setSubmitError(null);
 
     if (lessonProgress) {
       setFinalResult(true);
@@ -303,9 +298,6 @@ export default function LessonsPage() {
           <>
             {Array.isArray(lessons) &&
               lessons.map((l) => {
-                const isDone = progress?.data?.some(
-                  (e) => e.lessonId === l._id,
-                );
                 console.log(Progresslesson);
                 return (
                   <Button
@@ -335,6 +327,11 @@ export default function LessonsPage() {
                   </Button>
                 );
               })}
+              {lessons.length === 0 && (
+                <Typography sx={{ color: "text.secondary" , textAlign: "center", fontSize: 17 }}>
+                  لا توجد دروس متاحة حاليا
+                </Typography>
+              )}
 
             <Box
               sx={{
@@ -357,7 +354,7 @@ export default function LessonsPage() {
       </Box>
 
       {/* ---------------- الجنب التاني: فيديو الدرس + البيانات المعروفة ---------------- */}
-      <Box sx={{ flex: 1, minWidth: 0 , position: "relative", overflow: "hidden" }}>
+      <Box sx={{ flex: 1, minWidth: 0, position: "relative" }}>
         {isLoading ? (
           <Box
             sx={{
@@ -909,22 +906,9 @@ export default function LessonsPage() {
             <Divider sx={{ mb: 2 }} />
           </>
         )}
-        {!activeLesson && <h1 style={{position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%"}}>لا يوجد درس متاح حاليا</h1>}
+        {/* {!activeLesson && <h1 style={{position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%"}}>لا يوجد درس متاح حاليا</h1>} */}
       </Box>
 
-      <Snackbar
-        open={!!submitError}
-        autoHideDuration={6000}
-        onClose={() => setSubmitError(null)}
-      >
-        <Alert
-          severity="warning"
-          onClose={() => setSubmitError(null)}
-          sx={{ width: "100%" }}
-        >
-          {submitError}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 }

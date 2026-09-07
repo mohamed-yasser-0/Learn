@@ -45,9 +45,8 @@ function Navbar() {
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [notifAnchor, setNotifAnchor] = useState(null);
   const unread = NOTIFICATIONS.filter((n) => !n.read).length;
-  const { user, progress } = React.useContext(AuthContext);
+  const { user} = React.useContext(AuthContext);
   const navigate = useNavigate();
-  const pct = Math.round(progress?.data?.length);
 
   function Logout() {
     setProfileAnchor(null);
@@ -99,7 +98,7 @@ function Navbar() {
                 sx={{ fontSize: 16, color: "secondary.dark" }}
               />
             }
-            label={`${pct} نقطة`}
+            label={`${0} نقطة`}
             size="small"
             sx={{
               bgcolor: "#FFF7E0",
