@@ -25,10 +25,10 @@ export default function FullScreenDialog() {
     level: "",
     cat: "",
     price: "0",
-    imgeCourse: "",
   });
 
-  const [open, setOpen] = React.useState(false);
+  const [image, setImage] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -39,16 +39,38 @@ export default function FullScreenDialog() {
   };
 
   const handleChange = (e) => {
-    setFormCourse({ ...formCourse, [e.target.name]: e.target.value });
+    setFormCourse({
+      ...formCourse,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      setImage(file);
+    }
   };
 
   const handleSubmit = () => {
-    const data = {
-      ...formCourse,
-      price: Number(formCourse.price), // نحول السعر لرقم
-    };
-    postCourse(data);
-    console.log("data", data);
+    const formData = new FormData();
+
+    formData.append("title", formCourse.title);
+    formData.append("description", formCourse.description);
+    formData.append("level", formCourse.level);
+    formData.append("cat", formCourse.cat);
+    formData.append("price", Number(formCourse.price));
+
+    if (image) {
+      formData.append("imgeCourse", image);
+    }
+
+    postCourse(formData);
+
+    console.log("Course data:", formCourse);
+    console.log("Image:", image);
+
     handleClose();
   };
 
@@ -77,44 +99,69 @@ export default function FullScreenDialog() {
           </Toolbar>
         </AppBar>
 
-        <List sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+        <List
+          sx={{
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
           <TextField
             label="عنوان الكورس"
             name="title"
+            value={formCourse.title}
             onChange={handleChange}
             fullWidth
           />
+
           <TextField
             label="وصف الكورس"
             name="description"
+            value={formCourse.description}
             onChange={handleChange}
             fullWidth
           />
+
           <TextField
             label="المستوى"
             name="level"
+            value={formCourse.level}
             onChange={handleChange}
             fullWidth
           />
+
           <TextField
             label="الفئة"
             name="cat"
+            value={formCourse.cat}
             onChange={handleChange}
             fullWidth
           />
+
           <TextField
             label="السعر"
             name="price"
             type="number"
+            value={formCourse.price}
             onChange={handleChange}
             fullWidth
           />
-          <TextField
-            label="لينك الصوره"
-            name="imgeCourse"
-            onChange={handleChange}
-            fullWidth
-          />
+
+          <Button
+            variant="outlined"
+            component="label"
+            sx={{ fontSize: "18px" }}
+          >
+            {image ? image.name : "اختيار صورة الكورس"}
+
+            <input
+              type="file"
+              hidden
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+          </Button>
 
           <Button
             variant="contained"

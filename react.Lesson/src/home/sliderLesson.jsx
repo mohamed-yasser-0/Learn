@@ -357,8 +357,8 @@ export default function LessonsPage() {
       </Box>
 
       {/* ---------------- الجنب التاني: فيديو الدرس + البيانات المعروفة ---------------- */}
-      <Box sx={{ flex: 1, minWidth: 0 }}>
-        {isLoading || !activeLesson ? (
+      <Box sx={{ flex: 1, minWidth: 0 , position: "relative", overflow: "hidden" }}>
+        {isLoading ? (
           <Box
             sx={{
               width: "100%",
@@ -909,6 +909,7 @@ export default function LessonsPage() {
             <Divider sx={{ mb: 2 }} />
           </>
         )}
+        {!activeLesson && <h1 style={{position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%"}}>لا يوجد درس متاح حاليا</h1>}
       </Box>
 
       <Snackbar

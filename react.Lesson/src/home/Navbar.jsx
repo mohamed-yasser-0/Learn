@@ -70,7 +70,7 @@ function Navbar() {
         {/* Logo */}
         <Box sx={{ mr: { md: "auto" } }}>
           <Typography
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/Learn/home")}
             sx={{
               fontFamily: "'Amiri', serif",
               fontSize: 24,
@@ -196,7 +196,7 @@ function Navbar() {
           <MenuItem
             onClick={() => {
               setProfileAnchor(null);
-              navigate("/profile");
+              navigate("/Learn/profile");
             }}
             sx={{ gap: 1.5, py: 1.2 }}
           >

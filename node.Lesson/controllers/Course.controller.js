@@ -3,6 +3,7 @@ const Course = require("../model/course.js");
 const { SUCCESS, FAIL } = require("../utils/httpStatusText.js");
 const Lesson = require("../model/lessons.js");
 const appError = require("../utils/appError.js");
+const Progress = require("../model/progress.js");
 
 
 const postCourse = AsyncWrapper(async (req, res, next) => {
@@ -61,7 +62,8 @@ const delCourse = AsyncWrapper(async (req, res, next) => {
         return next(appError.create("الكورس غير موجود", 404, FAIL));
     }
 
-    await Lesson.deleteMany({ courseId: id });
+    await Lesson.deleteMany({ idCours: id });
+    await Progress.deleteMany({ courseId: id });
 
     await Course.findByIdAndDelete(id);
 

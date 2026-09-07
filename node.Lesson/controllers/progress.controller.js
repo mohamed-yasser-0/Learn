@@ -6,7 +6,7 @@ const appError = require("../utils/appError.js");
 const { SUCCESS, FAIL } = require("../utils/httpStatusText.js");
 
 const postProgress = AsyncWrapper(async (req, res, next) => {
-    const {lessonId} = req.body;
+    const { lessonId } = req.body;
 
     const lesson = await Lesson.findById(lessonId);
 
@@ -37,7 +37,6 @@ const getProgress = AsyncWrapper(async (req, res, next) => {
         const error = appError.create("No progress found", 404, FAIL);
         return next(error);
     }
-
     res.send({
         status: SUCCESS,
         data: progress
