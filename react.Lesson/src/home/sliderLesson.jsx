@@ -24,15 +24,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import FullScreenDialogQuiz from "../Dialog/examDialog";
 import CheckIcon from "@mui/icons-material/Check";
+import CertificateDialog from "../Dialog/DialogDone";
 export default function LessonsPage() {
   const theme = useTheme();
   const { id } = useParams();
-
   const [activeLessonId, setActiveLessonId] = useState(null);
   const [showSummary, setShowSummary] = useState(false);
   const [answers, setAnswers] = useState({});
   const [finalResult, setFinalResult] = useState(false);
   const [quizResult, setQuizResult] = useState({});
+  const [open, setOpen] = useState(false);
+  const [courseDone, setCourseDone] = useState(false);
 
   const { getLessons, lessons, user, loadingLessons, setSnackbar } =
     React.useContext(AuthContext);
@@ -251,7 +253,13 @@ export default function LessonsPage() {
 
   if (isError);
   if (errorProgress);
+  const ProgressCourse = Progresslesson?.data?.filter(
+    (progress) => progress?.courseId === id,
+  );
+  const ProgressLesson = lessons?.filter((lesson) => lesson?.type === "quiz");
 
+  console.log(ProgressCourse);
+  console.log(ProgressLesson);
   return (
     <Box
       sx={{
@@ -327,12 +335,23 @@ export default function LessonsPage() {
                   </Button>
                 );
               })}
-              {lessons.length === 0 && (
-                <Typography sx={{ color: "text.secondary" , textAlign: "center", fontSize: 17 }}>
-                  لا توجد دروس متاحة حاليا
-                </Typography>
-              )}
-
+            {lessons.length === 0 && (
+              <Typography
+                sx={{
+                  color: "text.secondary",
+                  textAlign: "center",
+                  fontSize: 17,
+                }}
+              >
+                لا توجد دروس متاحة حاليا
+              </Typography>
+            )}
+            {ProgressCourse?.length === ProgressLesson?.length &&
+            ProgressCourse?.length !== 0 ? (
+              <Button variant="outlined" onClick={() => setOpen(true)}>
+                إنهاء الكورس
+              </Button>
+            ) : null}
             <Box
               sx={{
                 width: "100%",
@@ -341,6 +360,17 @@ export default function LessonsPage() {
                 display: "flex",
               }}
             >
+              <CertificateDialog
+                open={open}
+                onClose={() => setOpen(false)}
+                data={{
+                  studentName: "أحمد سامي ضيا",
+                  courseName: "رواية الإمام قالون عن نافع من طريق الشاطبية",
+                  coursePeriod: "خلال شهر يوليو 2026",
+                  instructorName: "أحمد خالد السطوي",
+                  academyName: "أكاديمية إقرأ وارتق لتعليم القرآن وعلومه",
+                }}
+              />
               {user?.role === "ADMIN" && <FullScreenDialogLesson />}
               {user?.role === "ADMIN" && <FullScreenDialogQuiz />}
             </Box>
@@ -908,7 +938,6 @@ export default function LessonsPage() {
         )}
         {/* {!activeLesson && <h1 style={{position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%"}}>لا يوجد درس متاح حاليا</h1>} */}
       </Box>
-
     </Box>
   );
 }

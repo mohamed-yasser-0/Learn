@@ -9,8 +9,8 @@ dns.setServers(["1.1.1.1", "1.0.0.1", "8.8.8.8"]);
 const { postCourse, getCourse, getSingleCourse, delCourse, updateCourse } = require("./controllers/Course.controller.js");
 const courseRouter = require("./routes/course.routes.js");
 const lessonRouter = require("./routes/lessons.routes.js");
-const examRouter = require("./routes/exam.routes.js");
-const examDegRouter = require("./routes/deg.routes.js");
+// const examRouter = require("./routes/exam.routes.js");
+// const examDegRouter = require("./routes/deg.routes.js");
 const progress = require("./routes/progress.routes.js");
 const usersRouter = require("./routes/users.routes.js");
 
@@ -28,8 +28,8 @@ mongoose
 
 app.use("/api/course", courseRouter)
 app.use("/api/lessons", lessonRouter)
-app.use("/api/exam", examRouter)
-app.use("/api/deg", examDegRouter)
+// app.use("/api/exam", examRouter)
+// app.use("/api/deg", examDegRouter)
 app.use("/api/progress", progress)
 app.use("/api/users", usersRouter)
 

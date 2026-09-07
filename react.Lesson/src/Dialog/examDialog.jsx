@@ -40,7 +40,7 @@ export default function FullScreenDialogQuiz() {
   const [open, setOpen] = useState(false);
 
   const [formQuiz, setFormQuiz] = useState({
-    title: "امتحان",
+    title: "اختبار",
     order: 0,
     questions: [emptyQuestion()],
   });
@@ -371,14 +371,14 @@ export default function FullScreenDialogQuiz() {
             }
             fullWidth
           />
-          <TextField
+          {/* <TextField
             label="ترتيب الدرس"
             name="order"
             type="number"
             value={formQuiz.order}
             onChange={handleOrderChange}
             fullWidth
-          />
+          /> */}
 
           <Divider />
 
