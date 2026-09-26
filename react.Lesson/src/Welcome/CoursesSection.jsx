@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   Typography,
   Box,
@@ -11,35 +11,36 @@ import {
   Button,
   Avatar,
   Divider,
-  Collapse,
   IconButton,
   Modal,
   Backdrop,
   Fade,
+  Tabs,
+  Tab,
 } from "@mui/material";
-import cert1 from "../imge/773218331_1351440733869953_2930793003199695550_n.jpg";
-import cert2 from "../imge/773450240_1351440377203322_2537070963301122672_n.jpg";
-import cert3 from "../imge/773820572_1351441357203224_4516835700474019423_n.jpg";
-import cert4 from "../imge/774117016_1351441223869904_4986948222296245017_n.jpg";
-import cert5 from "../imge/774126263_1351440513869975_6512775546340107170_n.jpg";
-import cert6 from "../imge/774165308_1351440583869968_3472424699917234996_n.jpg";
-import cert7 from "../imge/774165311_1351440930536600_9050312477647401620_n.jpg";
-import cert8 from "../imge/774512657_1351440833869943_1235939038169816311_n.jpg";
-import cert9 from "../imge/774512665_1351441307203229_7736539507701227946_n.jpg";
-import cert10 from "../imge/774595814_1351440473869979_6618350480322651109_n.jpg";
-import cert11 from "../imge/774666348_1351441140536579_1305497926278094056_n.jpg";
-import cert12 from "../imge/774761656_1351440757203284_7477119485444293285_n.jpg";
-import cert13 from "../imge/774862835_1351440990536594_6244647155502902869_n.jpg";
-import cert14 from "../imge/774886612_1351440317203328_7243453056306604525_n.jpg";
-import cert15 from "../imge/774993971_1351441193869907_294954354666731876_n.jpg";
-import cert16 from "../imge/774993976_1351440790536614_5219288755429808484_n.jpg";
-import cert17 from "../imge/775259814_1351441273869899_8998278057012365362_n.jpg";
-import cert18 from "../imge/775537561_1351440420536651_2316019436593169529_n.jpg";
-import cert19 from "../imge/775654128_1351440697203290_1319820558461826544_n.jpg";
-import cert20 from "../imge/776077173_1351440660536627_3942206778749947740_n.jpg";
-import cert21 from "../imge/776222371_1351440620536631_2613257701441243172_n.jpg";
-import cert22 from "../imge/776222383_1351440543869972_2420851041226940209_n.jpg";
-import cert23 from "../imge/777418281_1351440887203271_6439058991958627147_n.jpg";
+// import cert1 from "../imge/773218331_1351440733869953_2930793003199695550_n.jpg";
+// import cert2 from "../imge/773450240_1351440377203322_2537070963301122672_n.jpg";
+// import cert3 from "../imge/773820572_1351441357203224_4516835700474019423_n.jpg";
+// import cert4 from "../imge/774117016_1351441223869904_4986948222296245017_n.jpg";
+// import cert5 from "../imge/774126263_1351440513869975_6512775546340107170_n.jpg";
+// import cert6 from "../imge/774165308_1351440583869968_3472424699917234996_n.jpg";
+// import cert7 from "../imge/774165311_1351440930536600_9050312477647401620_n.jpg";
+// import cert8 from "../imge/774512657_1351440833869943_1235939038169816311_n.jpg";
+// import cert9 from "../imge/774512665_1351441307203229_7736539507701227946_n.jpg";
+// import cert10 from "../imge/774595814_1351440473869979_6618350480322651109_n.jpg";
+// import cert11 from "../imge/774666348_1351441140536579_1305497926278094056_n.jpg";
+// import cert12 from "../imge/774761656_1351440757203284_7477119485444293285_n.jpg";
+// import cert13 from "../imge/774862835_1351440990536594_6244647155502902869_n.jpg";
+// import cert14 from "../imge/774886612_1351440317203328_7243453056306604525_n.jpg";
+// import cert15 from "../imge/774993971_1351441193869907_294954354666731876_n.jpg";
+// import cert16 from "../imge/774993976_1351440790536614_5219288755429808484_n.jpg";
+// import cert17 from "../imge/775259814_1351441273869899_8998278057012365362_n.jpg";
+// import cert18 from "../imge/775537561_1351440420536651_2316019436593169529_n.jpg";
+// import cert19 from "../imge/775654128_1351440697203290_1319820558461826544_n.jpg";
+// import cert20 from "../imge/776077173_1351440660536627_3942206778749947740_n.jpg";
+// import cert21 from "../imge/776222371_1351440620536631_2613257701441243172_n.jpg";
+// import cert22 from "../imge/776222383_1351440543869972_2420851041226940209_n.jpg";
+// import cert23 from "../imge/777418281_1351440887203271_6439058991958627147_n.jpg";
 
 import { useEffect, useRef } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -49,7 +50,6 @@ import CampaignIcon from "@mui/icons-material/Campaign";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
-import AutorenewIcon from "@mui/icons-material/Autorenew";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
@@ -57,7 +57,11 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import PersonIcon from "@mui/icons-material/Person";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 const theme = createTheme({
   palette: {
     background: { default: "#F7F3EB" },
@@ -69,62 +73,6 @@ const theme = createTheme({
 });
 
 const WHATSAPP_NUMBER = "201093495292";
-
-/* ===================== بيانات الخطط ===================== */
-const plans = [
-  {
-    icon: <MenuBookIcon sx={{ fontSize: 32 }} />,
-    tag: "الأكثر طلبًا",
-    tagColor: "#0D4F3C",
-    tagBg: "#E6F2ED",
-    title: "خطة الحفظ",
-    subtitle: "من الصفر إلى الختم",
-    accentColor: "#0D4F3C",
-    accentLight: "#E6F2ED",
-    features: ["جدول يومي منظّم", "متابعة مع الشيخ", "تصحيح التلاوة"],
-    duration: "١٢ – ٣٦ شهرًا",
-    message: "السلام عليكم، أريد الاشتراك في خطة الحفظ 📖",
-  },
-  {
-    icon: <AutorenewIcon sx={{ fontSize: 32 }} />,
-    tag: "للمحافظة على القرآن",
-    tagColor: "#8B6914",
-    tagBg: "#FBF5E6",
-    title: "خطة المراجعة",
-    subtitle: "تثبيت ما حفظته",
-    accentColor: "#C9A84C",
-    accentLight: "#FBF5E6",
-    features: ["جدول مراجعة أسبوعي", "اختبارات دورية", "تقرير شهري للتقدم"],
-    duration: "مستمرة",
-    message: "السلام عليكم، أريد الاشتراك في خطة المراجعة 🔄",
-  },
-  {
-    icon: <RecordVoiceOverIcon sx={{ fontSize: 32 }} />,
-    tag: "للمتقدمين",
-    tagColor: "#5C3D8A",
-    tagBg: "#F3EDF8",
-    title: "خطة القراءات",
-    subtitle: "تعلّم روايات وقراءات",
-    accentColor: "#6B4C9A",
-    accentLight: "#F3EDF8",
-    features: ["رواية حفص وورش", "شرح أحكام التجويد", "إجازة مع سند"],
-    duration: "٦ – ١٨ شهرًا",
-    message: "السلام عليكم، أريد الاشتراك في خطة القراءات 🎙️",
-  },
-  {
-    icon: <EmojiEventsIcon sx={{ fontSize: 32 }} />,
-    tag: "مرونة كاملة",
-    tagColor: "#8B3A2E",
-    tagBg: "#F9EDEA",
-    title: "خطة مخصصة",
-    subtitle: "صمّم مسارك بنفسك",
-    accentColor: "#A04A3C",
-    accentLight: "#F9EDEA",
-    features: ["يناسب جدولك الخاص", "أهداف حسب رغبتك", "دعم شخصي مستمر"],
-    duration: "حسب الاتفاق",
-    message: "السلام عليكم، أريد الاستفسار عن خطة مخصصة ✨",
-  },
-];
 
 /* ===================== بيانات الإجازات ===================== */
 const ijazahPaths = [
@@ -177,149 +125,209 @@ const stories = [
   },
 ];
 
-/* ===================== كارت الخطة ===================== */
-function PlanCard({ plan }) {
-  const handleWhatsApp = () => {
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-      plan.message,
-    )}`;
-    window.open(url, "_blank");
-  };
+const DEFAULT_TEACHER = "الشيخ أحمد خالد";
 
-  return (
-    <Card
-      sx={{
-        borderRadius: 3,
-        boxShadow: "0 4px 20px rgba(13,79,60,0.08)",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        border: "1px solid #E8E0D5",
-        transition: "all 0.3s ease",
-        "&:hover": {
-          transform: "translateY(-6px)",
-          boxShadow: "0 12px 32px rgba(13,79,60,0.14)",
-        },
-      }}
-    >
-      <Box sx={{ height: 6, bgcolor: plan.accentColor }} />
+const diplomas = [
+  {
+    id: "dip-1",
+    name: "دبلومة إتقان القراءات العشر",
+    teacher: DEFAULT_TEACHER,
+    days: "الإثنين والأربعاء والجمعة",
+    time: "09:00 م",
+    startLabel: "2/10/2026",
+    startDate: "2026-10-02T21:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "dip-2",
+    name: "دبلومة تأهيل معلم القرآن للأعاجم والعرب",
+    teacher: DEFAULT_TEACHER,
+    days: "يوم ويوم",
+    time: "9 م و10 م",
+    startLabel: "بداية أكتوبر 2026",
+    startDate: "2026-10-01T21:00:00",
+    status: "مخططة",
+  },
+];
 
-      <CardContent
-        sx={{
-          p: 3,
-          display: "flex",
-          flexDirection: "column",
-          flexGrow: 1,
-          gap: 1.5,
-        }}
-      >
-        <Stack
-          direction="row"
-          sx={{ justifyContent: "space-between", alignItems: "center" }}
-        >
-          <Box
-            sx={{
-              width: 54,
-              height: 54,
-              borderRadius: 2,
-              bgcolor: plan.accentLight,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: plan.accentColor,
-            }}
-          >
-            {plan.icon}
-          </Box>
-          <Chip
-            label={plan.tag}
-            size="small"
-            sx={{
-              bgcolor: plan.tagBg,
-              color: plan.tagColor,
-              fontWeight: 700,
-              fontSize: 12,
-            }}
-          />
-        </Stack>
+const courses = [
+  {
+    id: "c-1",
+    name: "الماهر في علم التجويد كاملًا بكل مستوياته",
+    teacher: DEFAULT_TEACHER,
+    days: "السبت والثلاثاء والخميس",
+    time: "09:00 م",
+    startLabel: "6/10/2026",
+    startDate: "2026-10-06T21:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-2",
+    name: "قراءة الإمام أبو عمرو البصري برواية الدوري والسوسي",
+    teacher: DEFAULT_TEACHER,
+    days: "الأحد والأربعاء",
+    time: "10:00 م",
+    startLabel: "14/10/2026",
+    startDate: "2026-10-14T22:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-3",
+    name: "قراءة الإمام ابن عامر برواية هشام وابن ذكوان",
+    teacher: DEFAULT_TEACHER,
+    days: "الأحد والأربعاء",
+    time: "10:00 م",
+    startLabel: "29/11/2026",
+    startDate: "2026-11-29T22:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-4",
+    name: "قراءة الإمام حمزة برواية خلف وخلاد",
+    teacher: DEFAULT_TEACHER,
+    days: "الأحد والأربعاء",
+    time: "10:00 م",
+    startLabel: "3/1/2027",
+    startDate: "2027-01-03T22:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-5",
+    name: "قراءة الإمام الكسائي برواية أبي الحارث",
+    teacher: DEFAULT_TEACHER,
+    days: "الأحد والأربعاء",
+    time: "10:00 م",
+    startLabel: "7/2/2027",
+    startDate: "2027-02-07T22:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-6",
+    name: "متن الدرة المضية في القراءات الثلاث المتممة",
+    teacher: DEFAULT_TEACHER,
+    days: "الإثنين والجمعة",
+    time: "10:00 م",
+    startLabel: "1/1/2027",
+    startDate: "2027-01-01T22:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-7",
+    name: "علم التجويد كاملًا: التحفة والجزرية",
+    teacher: DEFAULT_TEACHER,
+    days: "—",
+    time: "—",
+    startLabel: "أكتوبر 2026",
+    startDate: "2026-10-01T20:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-8",
+    name: "علم الوقف والابتداء",
+    teacher: "د. محمد عبدالله سليمان",
+    days: "—",
+    time: "—",
+    startLabel: "نوفمبر 2026",
+    startDate: "2026-11-01T20:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-9",
+    name: "القواعد الحسان في تفسير القرآن",
+    teacher: "د. محمد عبدالله سليمان",
+    days: "—",
+    time: "—",
+    startLabel: "نوفمبر 2026",
+    startDate: "2026-11-01T20:05:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-10",
+    name: "مفاتيح التدبر",
+    teacher: "د. محمد عبدالعظيم",
+    days: "—",
+    time: "—",
+    startLabel: "نوفمبر 2026",
+    startDate: "2026-11-01T20:10:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-11",
+    name: "رسم وضبط المصحف",
+    teacher: "د. إبراهيم الوزان",
+    days: "—",
+    time: "—",
+    startLabel: "ديسمبر 2026",
+    startDate: "2026-12-01T20:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-12",
+    name: "توجيه رواية حفص وبلاغيات قرآنية",
+    teacher: "د. عبدالله الطاهر",
+    days: "—",
+    time: "—",
+    startLabel: "ديسمبر 2026",
+    startDate: "2026-12-01T20:05:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-13",
+    name: "الآجرومية في علم النحو",
+    teacher: "الشيخ يوسف أحمد",
+    days: "—",
+    time: "—",
+    startLabel: "ديسمبر 2026",
+    startDate: "2026-12-01T20:10:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-14",
+    name: "أنماط شخصيات الطلاب",
+    teacher: "د. عمرو الزواوي",
+    days: "—",
+    time: "—",
+    startLabel: "يناير 2027",
+    startDate: "2027-01-01T20:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-15",
+    name: "أساسيات إدارة حلقات الأعاجم",
+    teacher: DEFAULT_TEACHER,
+    days: "—",
+    time: "—",
+    startLabel: "فبراير 2027",
+    startDate: "2027-02-01T20:00:00",
+    status: "مخططة",
+  },
+  {
+    id: "c-16",
+    name: "التجويد بالإنجليزية",
+    teacher: DEFAULT_TEACHER,
+    days: "—",
+    time: "—",
+    startLabel: "مارس 2027",
+    startDate: "2027-03-01T20:00:00",
+    status: "مخططة",
+  },
+];
 
-        <Box>
-          <Typography
-            sx={{
-              fontFamily: "'Amiri', serif",
-              fontSize: { xs: 22, md: 24 },
-              fontWeight: 700,
-              color: "#0D4F3C",
-              lineHeight: 1.3,
-            }}
-          >
-            {plan.title}
-          </Typography>
-          <Typography sx={{ color: "text.secondary", fontSize: 14, mt: 0.3 }}>
-            {plan.subtitle}
-          </Typography>
-        </Box>
+/* =========================================================
+   أدوات مساعدة للعداد والصيغة العربية
+   ========================================================= */
 
-        <Stack spacing={0.9} sx={{ flexGrow: 1 }}>
-          {plan.features.map((f, i) => (
-            <Stack key={i} direction="row" sx={{ alignItems: "center" }}>
-              <Box
-                sx={{
-                  ml: 1.2,
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  bgcolor: plan.accentColor,
-                  flexShrink: 0,
-                }}
-              />
-              <Typography sx={{ fontSize: 14.5, color: "text.secondary" }}>
-                {f}
-              </Typography>
-            </Stack>
-          ))}
-        </Stack>
+const UNIT_FORMS = {
+  يوم: { 1: "يوم واحد", 2: "يومين", many: "يوم" },
+  ساعة: { 1: "ساعة واحدة", 2: "ساعتين", many: "ساعة" },
+  دقيقة: { 1: "دقيقة واحدة", 2: "دقيقتين", many: "دقيقة" },
+};
 
-        <Box
-          sx={{
-            mt: 1,
-            px: 1.8,
-            py: 0.7,
-            borderRadius: 2,
-            bgcolor: plan.accentLight,
-            alignSelf: "flex-start",
-          }}
-        >
-          <Typography
-            sx={{ fontSize: 13, color: plan.accentColor, fontWeight: 600 }}
-          >
-            ⏱ المدة: {plan.duration}
-          </Typography>
-        </Box>
-
-        <Button
-          fullWidth
-          variant="contained"
-          startIcon={<WhatsAppIcon />}
-          onClick={handleWhatsApp}
-          sx={{
-            gap: 1,
-            mt: 1.5,
-            bgcolor: "#0D4F3C",
-            color: "#fff",
-            fontWeight: 700,
-            fontSize: 15,
-            borderRadius: 2.5,
-            py: 1.2,
-            "&:hover": { bgcolor: "#0A3D2E" },
-          }}
-        >
-          ابدأ مع الشيخ الآن
-        </Button>
-      </CardContent>
-    </Card>
-  );
+function unitLabel(n, base) {
+  const f = UNIT_FORMS[base];
+  if (n === 1) return f[1];
+  if (n === 2) return f[2];
+  return `${n} ${f.many}`;
 }
 /* ===================== شريط آخر الأخبار (فوق) ===================== */
 function NewsTicker() {
@@ -932,17 +940,336 @@ function CertificatesSection() {
     </Box>
   );
 }
+{
+  /* ========== 1. سكشن الخطط ========== */
+}
+function getTimeStatus(startISO, now) {
+  const start = new Date(startISO).getTime();
+  const diffMs = start - now.getTime();
+
+  if (diffMs <= 0) {
+    return { label: "شغالة الآن", isLive: true };
+  }
+
+  const totalMinutes = Math.floor(diffMs / 60000);
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) {
+    return {
+      label: `باقي ${unitLabel(days, "يوم")}${
+        hours > 0 ? " و" + unitLabel(hours, "ساعة") : ""
+      }`,
+      isLive: false,
+    };
+  }
+  if (hours > 0) {
+    return {
+      label: `باقي ${unitLabel(hours, "ساعة")}${
+        minutes > 0 ? " و" + unitLabel(minutes, "دقيقة") : ""
+      }`,
+      isLive: false,
+    };
+  }
+  return {
+    label: `باقي ${unitLabel(Math.max(minutes, 1), "دقيقة")}`,
+    isLive: false,
+  };
+}
+
+const STORAGE_KEY = "saved_courses_diplomas";
+function ItemCard({ item, isDiploma, now, isNearest, isSaved, onToggleSave }) {
+  const { label, isLive } = getTimeStatus(item.startDate, now);
+
+  return (
+    <Box
+      sx={{
+        position: "relative",
+        height: "100%",
+        p: { xs: 2.25, sm: 3 },
+        borderRadius: 3,
+        bgcolor: "#fff",
+        border: isLive
+          ? "1.5px solid #2E7D32"
+          : isNearest
+            ? "1.5px solid #C9971E"
+            : "1px solid #E3ECE7",
+        boxShadow: isLive
+          ? "0 0 0 3px rgba(46,125,50,0.08)"
+          : isNearest
+            ? "0 0 0 3px rgba(201,151,30,0.08)"
+            : "none",
+        display: "flex",
+        flexDirection: "column",
+        gap: 1.75,
+        transition: "border-color .2s ease, box-shadow .2s ease",
+        "&:hover": { borderColor: "#0D4F3C" },
+      }}
+    >
+      {/* شريط علوي: أيقونة + عنوان + زرار الحفظ */}
+      <Stack
+        direction="row"
+        spacing={1.5}
+        sx={{ alignItems: "center", gap: 1 }}
+      >
+        <Box
+          sx={{
+            flexShrink: 0,
+            width: 44,
+            height: 44,
+            borderRadius: "12px",
+            bgcolor: isDiploma ? "#0D4F3C" : "#E6F2ED",
+            color: isDiploma ? "#fff" : "#0D4F3C",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {isDiploma ? (
+            <WorkspacePremiumIcon fontSize="small" />
+          ) : (
+            <MenuBookIcon fontSize="small" />
+          )}
+        </Box>
+
+        <Typography
+          sx={{
+            flex: 1,
+            fontFamily: "'Amiri', serif",
+            fontWeight: 700,
+            fontSize: { xs: 16.5, sm: 18 },
+            color: "#0D4F3C",
+            lineHeight: 1.6,
+          }}
+        >
+          {item.name}
+        </Typography>
+
+        <IconButton
+          size="small"
+          onClick={() => onToggleSave(item.id)}
+          aria-label="حفظ"
+          sx={{
+            flexShrink: 0,
+            color: isSaved ? "#C9971E" : "#B7C4BE",
+            "&:hover": { color: "#C9971E" },
+          }}
+        >
+          {isSaved ? (
+            <BookmarkIcon fontSize="small" />
+          ) : (
+            <BookmarkBorderIcon fontSize="small" />
+          )}
+        </IconButton>
+      </Stack>
+
+      {(isLive || isNearest) && (
+        <Chip
+          label={isLive ? "شغالة الآن" : "الأقرب"}
+          size="small"
+          icon={
+            isLive ? (
+              <Box
+                sx={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: "50%",
+                  bgcolor: "#2E7D32",
+                  ml: 0.75,
+                  "@keyframes pulse": {
+                    "0%": { opacity: 1 },
+                    "50%": { opacity: 0.25 },
+                    "100%": { opacity: 1 },
+                  },
+                  animation: "pulse 1.6s ease-in-out infinite",
+                }}
+              />
+            ) : undefined
+          }
+          sx={{
+            alignSelf: "flex-start",
+            bgcolor: isLive ? "#EAF6EC" : "#FDF4E1",
+            color: isLive ? "#1B5E20" : "#8A6100",
+            fontWeight: 700,
+            fontSize: 12.5,
+          }}
+        />
+      )}
+
+      <Divider sx={{ borderColor: "#EEF3F0" }} />
+
+      <Stack spacing={1.1}>
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: "center",
+            gap: 0.5,
+          }}
+        >
+          <PersonIcon sx={{ fontSize: 18, color: "#6B8F80" }} />
+          <Typography sx={{ fontSize: 14.5, color: "text.secondary" }}>
+            المعلم: <b style={{ color: "#0D4F3C" }}>{item.teacher}</b>
+          </Typography>
+        </Stack>
+
+        {item.days !== "—" && (
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              gap: 0.5,
+            }}
+          >
+            <CalendarMonthIcon sx={{ fontSize: 18, color: "#6B8F80" }} />
+            <Typography sx={{ fontSize: 14.5, color: "text.secondary" }}>
+              أيام الحضور: {item.days}
+            </Typography>
+          </Stack>
+        )}
+
+        {item.time !== "—" && (
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              gap: 0.5,
+            }}
+          >
+            <AccessTimeIcon sx={{ fontSize: 18, color: "#6B8F80" }} />
+            <Typography sx={{ fontSize: 14.5, color: "text.secondary" }}>
+              الموعد: {item.time}
+            </Typography>
+          </Stack>
+        )}
+      </Stack>
+
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={0.75}
+        sx={{
+          mt: "auto",
+          pt: 1,
+          alignItems: { xs: "flex-start", sm: "center" },
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography sx={{ fontSize: 13.5, color: "#9AA9A2" }}>
+          البداية: {item.startLabel}
+        </Typography>
+        <Chip
+          label={label}
+          size="small"
+          sx={{
+            bgcolor: isLive ? "#EAF6EC" : "#F0F5F2",
+            color: isLive ? "#1B5E20" : "#0D4F3C",
+            fontWeight: 700,
+            fontSize: 12.5,
+          }}
+        />
+      </Stack>
+      <Button
+        component="a"
+        href={`https://wa.me/${+201093495292}?text=${encodeURIComponent(
+          `السلام عليكم، أنا مهتم بـ "${item.name}"، ممكن أعرف تفاصيل أكتر؟`,
+        )}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        fullWidth
+        startIcon={<WhatsAppIcon sx={{ml:2}}/>}
+        sx={{
+          mt: 0.5,
+          bgcolor: "#25D366",
+          color: "#fff",
+          fontWeight: 700,
+          fontSize: 14.5,
+          borderRadius: 2,
+          py: 1,
+          "&:hover": { bgcolor: "#1EBE57" },
+        }}
+      >
+        تواصل مع الشيخ على واتساب
+      </Button>
+    </Box>
+  );
+}
 /* ===================== الصفحة الرئيسية ===================== */
 function FullPage() {
+  const [tab, setTab] = useState(0);
+  const [now, setNow] = useState(() => new Date());
+  const [saved, setSaved] = useState([]);
+
+  // تحديث العداد كل دقيقة، عشان "باقي كام" و"شغالة الآن" يفضلوا صحيحين
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // تحميل المحفوظ من localStorage أول ما الصفحة تفتح في المتصفح
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) setSaved(JSON.parse(raw));
+    } catch (e) {
+      // لو الوصول للـ localStorage فشل (متصفح خاص، إلخ)، نتجاهل بهدوء
+    }
+  }, []);
+
+  const toggleSave = useCallback((id) => {
+    setSaved((prev) => {
+      const next = prev.includes(id)
+        ? prev.filter((x) => x !== id)
+        : [...prev, id];
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch (e) {
+        // تجاهل بهدوء لو التخزين مش متاح
+      }
+      return next;
+    });
+  }, []);
+
+  // ترتيب كل قسم حسب الأقرب في الوقت (الشغالة دلوقتي والأقدم تاريخًا تطلع فوق)
+  const sortedDiplomas = useMemo(
+    () =>
+      [...diplomas].sort(
+        (a, b) => new Date(a.startDate) - new Date(b.startDate),
+      ),
+    [],
+  );
+  const sortedCourses = useMemo(
+    () =>
+      [...courses].sort(
+        (a, b) => new Date(a.startDate) - new Date(b.startDate),
+      ),
+    [],
+  );
+
+  const list = tab === 0 ? sortedDiplomas : sortedCourses;
+
+  // أول عنصر لسه مستقبلي (غير شغال دلوقتي) هو "الأقرب"
+  const nearestId = useMemo(() => {
+    const upcoming = list.find(
+      (item) => !getTimeStatus(item.startDate, now).isLive,
+    );
+    return upcoming ? upcoming.id : null;
+  }, [list, now]);
   return (
     <ThemeProvider theme={theme}>
       <Box dir="rtl" sx={{ bgcolor: "background.default", minHeight: "100vh" }}>
         {/* ========== شريط الأخبار فوق ========== */}
-        <NewsTicker />
-        {/* ========== 1. سكشن الخطط ========== */}
-        <Box id="plan" sx={{ py: { xs: 8, md: 12 }, px: { xs: 2, md: 4 } }}>
+        {/* <NewsTicker /> */}
+        <Box
+          id="courses"
+          dir="rtl"
+          sx={{
+            py: { xs: 6, md: 12 },
+            px: { xs: 2, md: 4 },
+            bgcolor: "#FAFCFB",
+          }}
+        >
           <Container maxWidth="lg">
-            <Box sx={{ textAlign: "center", mb: { xs: 5, md: 8 } }}>
+            <Box sx={{ textAlign: "center", mb: { xs: 4, md: 7 } }}>
               <Chip
                 label="خريطة المسارات"
                 sx={{
@@ -956,33 +1283,91 @@ function FullPage() {
               <Typography
                 sx={{
                   fontFamily: "'Amiri', serif",
-                  fontSize: { xs: 28, md: 40 },
+                  fontSize: { xs: 26, sm: 32, md: 40 },
                   fontWeight: 700,
                   color: "#0D4F3C",
                   mb: 1.5,
                   lineHeight: 1.4,
                 }}
               >
-                اختر خطتك في حفظ القرآن الكريم
+                الدبلومات والدورات
               </Typography>
               <Typography
                 sx={{
                   color: "text.secondary",
-                  fontSize: { xs: 15, md: 16.5 },
-                  maxWidth: 540,
+                  fontSize: { xs: 14.5, md: 16.5 },
+                  maxWidth: 560,
                   mx: "auto",
-                  lineHeight: 1.85,
+                  lineHeight: 1.9,
                 }}
               >
-                اضغط على الخطة التي تناسبك وتواصل مع الشيخ مباشرةً عبر واتساب
-                لتبدأ رحلتك مع كتاب الله
+                اختر المسار الذي يناسبك، وابدأ رحلتك في حفظ وتلاوة كتاب الله على
+                يد مشايخ متخصصين
               </Typography>
+
+              <Box
+                sx={{
+                  height: 3,
+                  width: 72,
+                  mx: "auto",
+                  mt: 2.5,
+                  borderRadius: 2,
+                  background:
+                    "repeating-linear-gradient(45deg, #0D4F3C 0 6px, transparent 6px 12px)",
+                }}
+              />
             </Box>
 
-            <Grid container spacing={3} sx={{ justifyContent: "center" }}>
-              {plans.map((plan, i) => (
-                <Grid key={i} size={{ xs: 12, sm: 6, lg: 3 }}>
-                  <PlanCard plan={plan} />
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 5 }}>
+              <Tabs
+                value={tab}
+                onChange={(_, v) => setTab(v)}
+                variant="scrollable"
+                scrollButtons={false}
+                sx={{
+                  minHeight: 0,
+                  maxWidth: "100%",
+                  bgcolor: "#F0F5F2",
+                  borderRadius: 999,
+                  p: 0.6,
+                  "& .MuiTabs-indicator": { display: "none" },
+                  "& .MuiTabs-flexContainer": { gap: 0.5 },
+                }}
+              >
+                {["الدبلومات", "الدورات"].map((label) => (
+                  <Tab
+                    key={label}
+                    label={label}
+                    sx={{
+                      minHeight: 0,
+                      px: { xs: 2.5, sm: 3.5 },
+                      py: 1.1,
+                      borderRadius: 999,
+                      fontWeight: 700,
+                      fontSize: { xs: 14, sm: 15.5 },
+                      color: "#0D4F3C",
+                      whiteSpace: "nowrap",
+                      "&.Mui-selected": {
+                        bgcolor: "#0D4F3C",
+                        color: "#fff",
+                      },
+                    }}
+                  />
+                ))}
+              </Tabs>
+            </Box>
+
+            <Grid container spacing={{ xs: 2, sm: 3 }}>
+              {list.map((item) => (
+                <Grid key={item.id} size={{ xs: 12, sm: 6, lg: 4 }}>
+                  <ItemCard
+                    item={item}
+                    isDiploma={tab === 0}
+                    now={now}
+                    isNearest={item.id === nearestId}
+                    isSaved={saved.includes(item.id)}
+                    onToggleSave={toggleSave}
+                  />
                 </Grid>
               ))}
             </Grid>
@@ -999,9 +1384,8 @@ function FullPage() {
             </Typography>
           </Container>
         </Box>
-
         {/* ========== 2. سكشن الإجازات والسند ========== */}
-        <Box
+        {/* <Box
           id="ijazah"
           sx={{
             py: { xs: 8, md: 12 },
@@ -1127,9 +1511,9 @@ function FullPage() {
               ))}
             </Grid>
           </Container>
-        </Box>
+        </Box> */}
         {/* ========== سكشن شهادات الطلاب ========== */}
-        <CertificatesSection />
+        {/* <CertificatesSection /> */}
         {/* ========== 3. سكشن قصص النجاح ========== */}
         <Box id="stories" sx={{ py: { xs: 8, md: 12 }, px: { xs: 2, md: 4 } }}>
           <Container maxWidth="lg">
