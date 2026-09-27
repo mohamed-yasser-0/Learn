@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useCallback, useMemo, useState } from "react";
 import {
   Typography,
@@ -9,12 +10,8 @@ import {
   Chip,
   Stack,
   Button,
-  Avatar,
   Divider,
   IconButton,
-  Modal,
-  Backdrop,
-  Fade,
   Tabs,
   Tab,
 } from "@mui/material";
@@ -298,9 +295,6 @@ export const plansData = [
     message: "السلام عليكم، أريد الاستفسار عن خطة مخصصة ✨",
   },
 ];
-/* =========================================================
-   أدوات مساعدة للعداد والصيغة العربية
-   ========================================================= */
 
 const UNIT_FORMS = {
   يوم: { 1: "يوم واحد", 2: "يومين", many: "يوم" },
@@ -1372,7 +1366,7 @@ function FullPage() {
                 fontSize: 14,
               }}
             >
-              🟢 متاحون يومياً · ابدأ رحلتك في تعلم القرآن وعلومه مجاناً
+              🟢 متاحون يومياً · ابدأ رحلتك في تعلم القرآن وعلومه{" "}
             </Typography>
           </Container>
         </Box>
