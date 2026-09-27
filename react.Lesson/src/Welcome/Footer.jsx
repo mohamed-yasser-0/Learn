@@ -18,13 +18,13 @@ import EmailIcon from "@mui/icons-material/Email";
 const socialLinks = [
   {
     icon: <WhatsAppIcon fontSize="small" />,
-    href: "https://wa.me/01556451729",
+    href: "https://wa.me/201101822005",
     bg: "#25D366",
     title: "واتساب",
   },
   {
     icon: <TelegramIcon fontSize="small" />,
-    href: "https://t.me/iqra_irtaki",
+    href: "https://t.me/AHMEDsatohi",
     bg: "#229ED9",
     title: "تيليغرام",
   },
@@ -52,15 +52,15 @@ const quickLinks = [
 const contactItems = [
   {
     icon: <EmailIcon sx={{ fontSize: 16, color: "secondary.light" }} />,
-    text: "info@iqra-irtaki.com",
+    text: "ahmedkhaled26996@gmail.com",
   },
   {
     icon: <WhatsAppIcon sx={{ fontSize: 16, color: "#25D366" }} />,
-    text: "+20 10 XXX XXXX",
+    text: "+20 1101822005",
   },
   {
     icon: <TelegramIcon sx={{ fontSize: 16, color: "#229ED9" }} />,
-    text: "قناة اقرأ وارتقِ على تيليغرام",
+    text: "https://t.me/AHMEDsatohi",
   },
 ];
 
