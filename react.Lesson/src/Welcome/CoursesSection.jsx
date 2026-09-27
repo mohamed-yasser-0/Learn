@@ -670,33 +670,43 @@ function CertificatesSection() {
           }}
           className="mySwiper"
         >
-          {[cert2, cert3, cert4, cert5, cert6, cert7, cert8, cert9, cert10,cert11,cert12].map(
-            (cert, index) => (
-              <SwiperSlide
-                key={index}
-                style={{
-                  textAlign: "center",
-                  fontSize: "18px",
-                  background: "#F9F6F0",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
+          {[
+            cert2,
+            cert3,
+            cert4,
+            cert5,
+            cert6,
+            cert7,
+            cert8,
+            cert9,
+            cert10,
+            cert11,
+            cert12,
+          ].map((cert, index) => (
+            <SwiperSlide
+              key={index}
+              style={{
+                textAlign: "center",
+                fontSize: "18px",
+                background: "#F9F6F0",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Box
+                component="img"
+                src={cert}
+                alt={`Certificate ${index + 2}`}
+                sx={{
+                  display: "block",
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
                 }}
-              >
-                <Box
-                  component="img"
-                  src={cert}
-                  alt={`Certificate ${index + 2}`}
-                  sx={{
-                    display: "block",
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              </SwiperSlide>
-            ),
-          )}
+              />
+            </SwiperSlide>
+          ))}
         </Swiper>
 
         {/* دعاء ختامي */}
@@ -1362,7 +1372,7 @@ function FullPage() {
                 fontSize: 14,
               }}
             >
-              🟢 الشيخ متاح للرد يومياً · الاستشارة مجانية
+              🟢 متاحون يومياً · ابدأ رحلتك في تعلم القرآن وعلومه مجاناً
             </Typography>
           </Container>
         </Box>
@@ -1387,7 +1397,8 @@ function FullPage() {
                 mt: 1,
               }}
             >
-              اختر الحلقة المناسبة لك، وابدأ التواصل مباشرة مع الشيخ عبر واتساب
+              اختر البرنامج المناسب لك، وابدأ رحلتك في تعلم القرآن وعلومه
+              بسهولة.
             </Typography>
           </Box>
           <Grid container spacing={3} sx={{ mb: 10 }}>

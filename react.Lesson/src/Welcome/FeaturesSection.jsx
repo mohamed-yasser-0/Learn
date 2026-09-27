@@ -1,30 +1,42 @@
 import { Typography, Box, Container, Grid } from "@mui/material";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
-import MicIcon from "@mui/icons-material/Mic";
-import ArticleIcon from "@mui/icons-material/Article";
-import MosqueIcon from "@mui/icons-material/Mosque";
+import LanguageIcon from "@mui/icons-material/Language";
+import SchoolIcon from "@mui/icons-material/School";
+import GroupsIcon from "@mui/icons-material/Groups";
+import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 
 function FeaturesSection() {
   const features = [
     {
       icon: <MenuBookIcon sx={{ fontSize: 26 }} />,
-      title: "تعليم القرآن الكريم",
-      desc: "دروس متدرجة لحفظ القرآن الكريم وتعلّم التلاوة الصحيحة خطوة بخطوة.",
+      title: "القرآن الكريم وعلومه",
+      desc: "تعلم القرآن الكريم وتفسيره وعلومه من خلال برامج تعليمية متدرجة ومناهج متخصصة.",
     },
     {
-      icon: <MicIcon sx={{ fontSize: 26 }} />,
-      title: "التجويد والتلاوة",
-      desc: "شرح أحكام التجويد عمليًا مع تطبيقات صوتية لتحسين القراءة والإتقان.",
+      icon: <LanguageIcon sx={{ fontSize: 26 }} />,
+      title: "تعليم للعرب والأعاجم",
+      desc: "برامج تعليمية مناسبة للناطقين بالعربية وغير الناطقين بها، بمستويات مختلفة.",
     },
     {
-      icon: <ArticleIcon sx={{ fontSize: 26 }} />,
-      title: "القراءات وعلوم القرآن",
-      desc: "تعلم القراءات القرآنية وعلوم القرآن بأسلوب مبسّط ومنظّم.",
+      icon: <SchoolIcon sx={{ fontSize: 26 }} />,
+      title: "إعداد وتأهيل المعلمين",
+      desc: "برامج ودورات متخصصة لتطوير مهارات المعلمين وتأهيلهم لتعليم القرآن وعلومه.",
     },
     {
-      icon: <MosqueIcon sx={{ fontSize: 26 }} />,
-      title: "متابعة ومراجعة مستمرة",
-      desc: "اختبارات ومراجعات دورية تساعدك على تثبيت الحفظ وتحسين الأداء.",
+      icon: <GroupsIcon sx={{ fontSize: 26 }} />,
+      title: "نخبة من العلماء والمتخصصين",
+      desc: "التعلم على يد نخبة من العلماء والدكاترة والمتخصصين في القرآن وعلومه والمجالات الشرعية.",
+    },
+    {
+      icon: <AutoStoriesIcon sx={{ fontSize: 26 }} />,
+      title: "دورات وبرامج متنوعة",
+      desc: "مجموعة متنوعة من الدورات والمحاضرات والبرامج التعليمية التي تناسب مختلف الاهتمامات والمستويات.",
+    },
+    {
+      icon: <TrackChangesIcon sx={{ fontSize: 26 }} />,
+      title: "مسارات تعليمية متكاملة",
+      desc: "اختر المسار الذي يناسبك وتابع تقدمك في رحلة تعليمية منظمة من البداية حتى الإتقان.",
     },
   ];
   return (
