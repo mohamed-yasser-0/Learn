@@ -18,25 +18,36 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import cert2 from "../imge/Alforkans (2).png";
-import cert1 from "../imge/WhatsApp Image 2026-09-27 at 4.06.00 PM (1).jpeg";
+import cert2 from "../imge/WhatsApp Image 2026-09-27 at 4.05.56 PM.jpeg";
+import cert3 from "../imge/WhatsApp Image 2026-09-27 at 4.05.57 PM.jpeg";
+import cert4 from "../imge/WhatsApp Image 2026-09-27 at 4.05.58 PM (1).jpeg";
+import cert5 from "../imge/WhatsApp Image 2026-09-27 at 4.05.58 PM (2).jpeg";
+import cert6 from "../imge/WhatsApp Image 2026-09-27 at 4.05.58 PM.jpeg";
+import cert7 from "../imge/WhatsApp Image 2026-09-27 at 4.05.59 PM.jpeg";
+import cert8 from "../imge/WhatsApp Image 2026-09-27 at 4.06.00 PM (1).jpeg";
+import cert9 from "../imge/WhatsApp Image 2026-09-27 at 4.06.00 PM.jpeg";
+import cert10 from "../imge/WhatsApp Image 2026-09-27 at 4.06.01 PM (1).jpeg";
+import cert11 from "../imge/WhatsApp Image 2026-09-27 at 4.06.01 PM.jpeg";
+import cert12 from "../imge/WhatsApp Image 2026-09-28 at 4.05.59 PM.jpeg";
+// Import Swiper React components
+import { Swiper, SwiperSlide } from "swiper/react";
 
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/free-mode";
+import "swiper/css/pagination";
+
+import "../styles.css";
+
+// import required modules
+import { Autoplay, FreeMode, Pagination } from "swiper/modules";
 import { useEffect, useRef } from "react";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import CloseIcon from "@mui/icons-material/Close";
-import CampaignIcon from "@mui/icons-material/Campaign";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
-import VerifiedIcon from "@mui/icons-material/Verified";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
-import AutoStoriesIcon from "@mui/icons-material/AutoStories";
-import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PersonIcon from "@mui/icons-material/Person";
@@ -53,57 +64,6 @@ const theme = createTheme({
 });
 
 const WHATSAPP_NUMBER = "201093495292";
-
-/* ===================== بيانات الإجازات ===================== */
-const ijazahPaths = [
-  {
-    title: "إجازة حفص عن عاصم",
-    description:
-      "إجازة متصلة السند برواية حفص، مع إتقان التلاوة وأحكام التجويد.",
-    icon: <WorkspacePremiumIcon sx={{ fontSize: 30 }} />,
-    points: ["سند متصل", "اختبار شامل", "شهادة معتمدة"],
-  },
-  {
-    title: "إجازة ورش عن نافع",
-    description: "دراسة رواية ورش مع بيان الفروقات والتطبيق العملي الدقيق.",
-    icon: <AutoStoriesIcon sx={{ fontSize: 30 }} />,
-    points: ["رواية متقنة", "شرح الفروقات", "إجازة موثقة"],
-  },
-  {
-    title: "إجازة التجويد",
-    description: "إجازة في علم التجويد النظري والعملي مع التصحيح المستمر.",
-    icon: <RecordVoiceOverIcon sx={{ fontSize: 30 }} />,
-    points: ["نظري + عملي", "تمارين مكثفة", "إتقان كامل"],
-  },
-];
-
-/* ===================== بيانات قصص النجاح ===================== */
-const stories = [
-  {
-    name: "أحمد محمد",
-    age: "14 سنة",
-    achievement: "ختم القرآن كاملًا",
-    text: "بفضل الله ثم متابعة الشيخ المنتظمة، قدرت أختم القرآن في أقل من سنتين مع إتقان التجويد.",
-  },
-  {
-    name: "فاطمة علي",
-    age: "9 سنوات",
-    achievement: "حفظ 15 جزء",
-    text: "البرنامج كان ممتع جدًا ومناسب لسني، والشيخ كان بيصحح لي باستمرار ويشجعني.",
-  },
-  {
-    name: "يوسف إبراهيم",
-    age: "17 سنة",
-    achievement: "حصل على إجازة",
-    text: "الحمد لله حصلت على إجازة برواية حفص بسند متصل بعد رحلة حفظ ومراجعة دقيقة.",
-  },
-  {
-    name: "مريم حسن",
-    age: "12 سنة",
-    achievement: "ختمت 20 جزء",
-    text: "الطريقة المنظمة والجدول اليومي ساعدوني أستمر بدون ملل، وأنصح كل الأطفال بالتجربة.",
-  },
-];
 
 const DEFAULT_TEACHER = "الشيخ أحمد خالد";
 
@@ -636,75 +596,6 @@ function unitLabel(n, base) {
 // }
 /* ===================== سكشن الاحتفال بالشهادات ===================== */
 function CertificatesSection() {
-  const certificates = [
-    { id: 1, image: cert1, name: "شهادة" },
-    { id: 2, image: cert2, name: "شهادة" },
-    // { id: 3, image: cert3, name: "شهادة" },
-    // { id: 4, image: cert4, name: "شهادة" },
-    // { id: 5, image: cert5, name: "شهادة" },
-    // { id: 6, image: cert6, name: "شهادة" },
-    // { id: 7, image: cert7, name: "شهادة" },
-    // { id: 8, image: cert8, name: "شهادة" },
-    // { id: 9, image: cert9, name: "شهادة" },
-    // { id: 10, image: cert10, name: "شهادة" },
-    // { id: 11, image: cert11, name: "شهادة" },
-    // { id: 12, image: cert12, name: "شهادة" },
-    // { id: 13, image: cert13, name: "شهادة" },
-    // { id: 14, image: cert14, name: "شهادة" },
-    // { id: 15, image: cert15, name: "شهادة" },
-    // { id: 16, image: cert16, name: "شهادة" },
-    // { id: 17, image: cert17, name: "شهادة" },
-    // { id: 18, image: cert18, name: "شهادة" },
-    // { id: 19, image: cert19, name: "شهادة" },
-    // { id: 20, image: cert20, name: "شهادة" },
-    // { id: 21, image: cert21, name: "شهادة" },
-    // { id: 22, image: cert22, name: "شهادة" },
-    // { id: 23, image: cert23, name: "شهادة" },
-  ];
-
-  const [current, setCurrent] = useState(0);
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-  const autoPlayRef = useRef(null);
-
-  const next = () => {
-    setCurrent((prev) => (prev + 1) % certificates.length);
-  };
-
-  const prev = () => {
-    setCurrent(
-      (prev) => (prev - 1 + certificates.length) % certificates.length,
-    );
-  };
-
-  // السكرول التلقائي
-  useEffect(() => {
-    autoPlayRef.current = setInterval(() => {
-      next();
-    }, 4000); // كل 4 ثواني
-
-    return () => clearInterval(autoPlayRef.current);
-  }, []);
-
-  // إيقاف التلقائي لما المستخدم يلمس
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
-    clearInterval(autoPlayRef.current);
-  };
-
-  const handleTouchEnd = (e) => {
-    touchEndX.current = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX.current;
-
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) next();
-      else prev();
-    }
-
-    // إعادة تشغيل التلقائي
-    autoPlayRef.current = setInterval(next, 4000);
-  };
-
   return (
     <Box
       id="certificates"
@@ -758,112 +649,55 @@ function CertificatesSection() {
           </Typography>
         </Box>
 
-        {/* ========== السلايدر ========== */}
-        <Box sx={{ position: "relative", maxWidth: 900, mx: "auto" }}>
-          {/* الأسهم */}
-          <IconButton
-            onClick={prev}
-            sx={{
-              position: "absolute",
-              left: { xs: -8, md: -50 },
-              top: "50%",
-              transform: "translateY(-50%)",
-              bgcolor: "white",
-              boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
-              zIndex: 2,
-              "&:hover": { bgcolor: "#f5f5f5" },
-            }}
-          >
-            <ChevronLeftIcon sx={{ color: "#0D4F3C" }} />
-          </IconButton>
-
-          <IconButton
-            onClick={next}
-            sx={{
-              position: "absolute",
-              right: { xs: -8, md: -50 },
-              top: "50%",
-              transform: "translateY(-50%)",
-              bgcolor: "white",
-              boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
-              zIndex: 2,
-              "&:hover": { bgcolor: "#f5f5f5" },
-            }}
-          >
-            <ChevronRightIcon sx={{ color: "#0D4F3C" }} />
-          </IconButton>
-
-          {/* الحاوية */}
-          <Box
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-            sx={{
-              overflow: "hidden",
-              borderRadius: 3,
-              border: "1px solid #E0D8CC",
-              bgcolor: "white",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                transition: "transform 0.5s ease",
-                transform: `translateX(${current * -100}%)`,
-              }}
-            >
-              {certificates.map((cert) => (
-                <Box
-                  key={cert.id}
-                  sx={{
-                    minWidth: "100%",
-                    width: "100%",
-                    flexShrink: 0,
-                    height: { xs: 300, sm: 420, md: 480 },
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: "#F9F6F0",
-                    p: 2,
-                  }}
-                >
-                  <img
-                    src={cert.image}
-                    alt={cert.name}
-                    style={{
-                      maxHeight: "100%",
-                      maxWidth: "100%",
-                      objectFit: "contain",
-                      borderRadius: "6px",
-                      boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-                    }}
-                  />
-                </Box>
-              ))}
-            </Box>
-          </Box>
-
-          {/* النقاط تحت */}
-          <Stack
-            direction="row"
-            spacing={1}
-            sx={{ justifyContent: "center", mt: 2.5 }}
-          >
-            {certificates.map((_, index) => (
-              <Box
+        <Swiper
+          slidesPerView={1}
+          breakpoints={{
+            768: {
+              slidesPerView: 3,
+            },
+          }}
+          spaceBetween={10}
+          loop={true}
+          speed={5000}
+          autoplay={{
+            delay: 0,
+            disableOnInteraction: false,
+          }}
+          modules={[Autoplay]}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          className="mySwiper"
+        >
+          {[cert2, cert3, cert4, cert5, cert6, cert7, cert8, cert9, cert10,cert11,cert12].map(
+            (cert, index) => (
+              <SwiperSlide
                 key={index}
-                onClick={() => setCurrent(index)}
-                sx={{
-                  width: current === index ? 22 : 8,
-                  height: 8,
-                  borderRadius: 4,
-                  bgcolor: current === index ? "#0D4F3C" : "#C9A84C",
-                  cursor: "pointer",
-                  transition: "all 0.3s",
+                style={{
+                  textAlign: "center",
+                  fontSize: "18px",
+                  background: "#F9F6F0",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
-              />
-            ))}
-          </Stack>
-        </Box>
+              >
+                <Box
+                  component="img"
+                  src={cert}
+                  alt={`Certificate ${index + 2}`}
+                  sx={{
+                    display: "block",
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                />
+              </SwiperSlide>
+            ),
+          )}
+        </Swiper>
 
         {/* دعاء ختامي */}
         <Typography
