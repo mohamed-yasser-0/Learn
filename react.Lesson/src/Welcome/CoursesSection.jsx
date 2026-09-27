@@ -60,7 +60,7 @@ const theme = createTheme({
   },
 });
 
-const WHATSAPP_NUMBER = "201093495292";
+const WHATSAPP_NUMBER = "201101822005";
 
 const DEFAULT_TEACHER = "الشيخ أحمد خالد";
 
@@ -1157,7 +1157,7 @@ function ItemCard({ item, isDiploma, now, isNearest, isSaved, onToggleSave }) {
       </Stack>
       <Button
         component="a"
-        href={`https://wa.me/201093495292?text=${encodeURIComponent(
+        href={`https://wa.me/201101822005?text=${encodeURIComponent(
           `السلام عليكم، أنا مهتم بـ "${item.name}"، ممكن أعرف تفاصيل أكتر؟`,
         )}`}
         fullWidth
