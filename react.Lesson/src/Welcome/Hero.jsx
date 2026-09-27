@@ -1,6 +1,35 @@
 import { Typography, Button, Box, Stack, Divider, Chip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { keyframes } from "@mui/system";
+import LOGO_URL from "../imge/Alforkans (2).png";
+// حركة التكبير والتصغير عند فتح الموقع (نبضة خفيفة)
+const logoPulse = keyframes`
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+`;
+
+// نبضة مستمرة خفيفة بعد ظهور الشعار
+const logoBreathing = keyframes`
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+`;
+
+// ضع هنا مسار اللوجو الحقيقي بتاعك بدل الرابط الوهمي ده
 
 function HeroSection() {
   // const {  } = useContext(AuthContext);
@@ -11,12 +40,11 @@ function HeroSection() {
   return (
     <Box
       sx={{
-        height: "92vh",
         bgcolor: "primary.main",
         position: "relative",
         overflow: "hidden",
         textAlign: "center",
-        py: 32,
+        py: { xs: 10, md: 16 },
         px: 3,
       }}
     >
@@ -42,7 +70,7 @@ function HeroSection() {
             height: size,
             borderRadius: "50%",
             border: `1px solid rgba(201,168,76,${0.22 - i * 0.06})`,
-            top: "50%",
+            top: "43%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             pointerEvents: "none",
@@ -51,6 +79,8 @@ function HeroSection() {
       ))}
 
       <Box sx={{ position: "relative", zIndex: 2 }}>
+        {/* اللوجو في المنتصف */}
+
         <Chip
           label="منصة قرآنية متكاملة"
           variant="outlined"
@@ -64,7 +94,7 @@ function HeroSection() {
           }}
         />
 
-        <Typography
+        {/* <Typography
           variant="h2"
           sx={{
             color: "#fff",
@@ -78,8 +108,21 @@ function HeroSection() {
             القرآن الكريم
           </Box>
           <br />و علومه
-        </Typography>
-
+        </Typography> */}
+        <Box
+          component="img"
+          src={LOGO_URL}
+          alt="شعار الموقع"
+          sx={{
+            width: 350,
+            height: 350,
+            objectFit: "contain",
+            display: "block",
+            mx: "auto",
+            filter: "drop-shadow(0 0 18px rgba(201,168,76,0.35))",
+            animation: `${logoPulse} 1.1s ease-out both, ${logoBreathing} 3.5s ease-in-out 1.1s infinite`,
+          }}
+        />
         <Typography
           sx={{
             color: "rgba(255,255,255,0.6)",
@@ -88,7 +131,7 @@ function HeroSection() {
             fontSize: 16,
           }}
         >
-          رحلة متكاملة لحفظ القرآن وتعلّم التجويد والقراءات وعلوم القرآن
+          رحلة متكاملة لتعلم القرآن الكريم وعلومه
         </Typography>
 
         {/* Ayah box */}
@@ -131,16 +174,29 @@ function HeroSection() {
         </Box>
 
         <Stack
-          direction="row"
-          spacing={2}
-          sx={{ justifyContent: "center", mt: "50px" }}
+          direction={{ xs: "column", sm: "row" }}
+          spacing={{ xs: 1, sm: 2 }}
+          sx={{
+            justifyContent: "center",
+            alignItems: "center",
+            mt: 1,
+            width: "100%",
+          }}
         >
           <Button
             variant="contained"
             color="secondary"
             size="large"
-            // onClick={() => navigate("/Learn/register")}
-            href="#plan"
+            onClick={() => {
+              document.getElementById("plan")?.scrollIntoView({
+                behavior: "smooth",
+              });
+            }}
+            sx={{
+              width: { xs: "85%", sm: "auto" },
+              fontSize: { xs: "0.85rem", sm: "1rem" },
+              px: { xs: 2, sm: 3 },
+            }}
           >
             ابدأ رحلتك مع القرآن
           </Button>
@@ -148,8 +204,15 @@ function HeroSection() {
           <Button
             variant="outlined"
             size="large"
-            onClick={() => navigate("/Learn/login")}
+            onClick={() => {
+              document.getElementById("courses")?.scrollIntoView({
+                behavior: "smooth",
+              });
+            }}
             sx={{
+              width: { xs: "85%", sm: "auto" },
+              fontSize: { xs: "0.85rem", sm: "1rem" },
+              px: { xs: 2, sm: 3 },
               color: "rgba(255,255,255,0.8)",
               borderColor: "rgba(255,255,255,0.3)",
               "&:hover": {
@@ -158,7 +221,7 @@ function HeroSection() {
               },
             }}
           >
-            استعرض الدروس
+            استعرض الدورات
           </Button>
         </Stack>
       </Box>

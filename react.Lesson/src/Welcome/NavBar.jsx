@@ -41,7 +41,7 @@ function Navbar() {
             py: { xs: 0.5, sm: 1 },
             fontSize: 14,
           }}
-          onClick={() => navigate("/Learn/login")}
+          // onClick={() => navigate("/Learn/login")}
         >
           تسجيل دخول
         </Button>
@@ -49,7 +49,7 @@ function Navbar() {
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => navigate("/Learn/register")}
+          // onClick={() => navigate("/Learn/register")}
           sx={{
             px: { xs: 0.5, sm: 2 },
             py: { xs: 0.5, sm: 1 },
