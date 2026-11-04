@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../theme/context";
+// import { AuthContext } from "../theme/context";
 
 function Navbar() {
   // const {} = React.useContext(AuthContext);
@@ -41,7 +41,7 @@ function Navbar() {
             py: { xs: 0.5, sm: 1 },
             fontSize: 14,
           }}
-          // onClick={() => navigate("/Learn/login")}
+          onClick={() => navigate("/Learn/login")}
         >
           تسجيل دخول
         </Button>
@@ -49,7 +49,7 @@ function Navbar() {
         <Button
           variant="contained"
           color="secondary"
-          // onClick={() => navigate("/Learn/register")}
+          onClick={() => navigate("/Learn/register")}
           sx={{
             px: { xs: 0.5, sm: 2 },
             py: { xs: 0.5, sm: 1 },

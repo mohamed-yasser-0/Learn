@@ -1,5 +1,5 @@
 import { Typography, Button, Box, Stack, Divider, Chip } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { keyframes } from "@mui/system";
 import LOGO_URL from "../imge/Alforkans (2).png";
@@ -36,7 +36,7 @@ function HeroSection() {
   useEffect(() => {
     localStorage.removeItem("token");
   }, []);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   return (
     <Box
       sx={{
