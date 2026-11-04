@@ -17,6 +17,12 @@ const usersRouter = require("./routes/users.routes.js");
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.get("/", (req, res) => {
+    res.json({
+        status: "SUCCESS",
+        message: "Backend is running successfully"
+    });
+});
 mongoose
     .connect(process.env.MONGODB_URL)
     .then(() => {
@@ -43,8 +49,12 @@ app.use((req, res, next) => {
 //         message: error.message || 'Something went wrong'
 //     });
 // });
-const PORT = process.env.PORT || 1000
+const PORT = process.env.PORT || 1000;
 
-app.listen(PORT, () => {
-    console.log("Server running on port", PORT)
-})
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log("Server running on port", PORT);
+    });
+}
+
+module.exports = app;
