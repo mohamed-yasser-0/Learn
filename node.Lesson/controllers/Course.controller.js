@@ -23,7 +23,7 @@ const postCourse = AsyncWrapper(async (req, res, next) => {
 const getCourse = AsyncWrapper(async (req, res) => {
     const course = await Course.find()
     res.send({
-        "status": SUCCESS,
+        "status": SUCCESS ,
         "data": {
             course
         }
