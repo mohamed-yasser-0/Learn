@@ -54,7 +54,7 @@ export default function FullScreenDialogQuiz() {
       const token = localStorage.getItem("token");
 
       const response = await axios.post(
-        `https://learn-production-6c88.up.railway.app/api/lessons/${id}`,
+        `https://read-seven-fawn.vercel.app/api/lessons/${id}`,
         quizData,
         {
           headers: {

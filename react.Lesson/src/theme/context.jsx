@@ -7,7 +7,7 @@ import axios from "axios";
 
 export const AuthContext = createContext();
 
-const BASE_URL = "https://learn-production-6c88.up.railway.app/api";
+const BASE_URL = "https://read-seven-fawn.vercel.app/api";
 const getAuthHeaders = () => ({
   "Content-Type": "application/json",
   Authorization: `Bearer ${localStorage.getItem("token")}`,

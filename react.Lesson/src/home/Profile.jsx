@@ -29,7 +29,7 @@ const ProfilePage = ({ gradesData, stats }) => {
 
     queryFn: async () => {
       const { data } = await axios.get(
-        `https://learn-production-6c88.up.railway.app/api/progress/watch`,
+        `https://read-seven-fawn.vercel.app/api/progress/watch`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

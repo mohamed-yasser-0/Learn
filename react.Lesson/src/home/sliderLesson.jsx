@@ -50,7 +50,7 @@ export default function LessonsPage() {
   const progressMutation = useMutation({
     mutationFn: async (progressData) => {
       const { data } = await axios.post(
-        `https://learn-production-6c88.up.railway.app/api/progress/watch`,
+        `https://read-seven-fawn.vercel.app/api/progress/watch`,
         progressData,
         {
           headers: {
@@ -90,7 +90,7 @@ export default function LessonsPage() {
 
     queryFn: async () => {
       const { data } = await axios.get(
-        `https://learn-production-6c88.up.railway.app/api/lessons/${id}`,
+        `https://read-seven-fawn.vercel.app/api/lessons/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -114,7 +114,7 @@ export default function LessonsPage() {
 
     queryFn: async () => {
       const { data } = await axios.get(
-        `https://learn-production-6c88.up.railway.app/api/progress/watch`,
+        `https://read-seven-fawn.vercel.app/api/progress/watch`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -348,9 +348,10 @@ export default function LessonsPage() {
             )}
             {ProgressCourse?.length === ProgressLesson?.length &&
             ProgressCourse?.length !== 0 ? (
-              <Button variant="outlined" onClick={() => setOpen(true)}>
-                إنهاء الكورس
-              </Button>
+              <></>
+              // <Button variant="outlined" onClick={() => setOpen(true)}>
+              //   إنهاء الكورس
+              // </Button>
             ) : null}
             <Box
               sx={{
